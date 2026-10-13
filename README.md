@@ -38,8 +38,9 @@ Ordem das abas, da física da luz ao tratamento:
 | Aba | Cena | Documento |
 |---|---|---|
 | 1 | A luz: onda eletromagnética, λ e energia do fóton | `docs/cenas/01-onda-em.md` |
-| 2 | Célula: citocromo c oxidase, ATP e inflamação (esquemática) | `docs/cenas/05-celula.md` |
-| 3 | Protocolos MASCC/ISOO para prevenção | `docs/cenas/06-dosimetria.md` |
-| 4 | Calculadora de dose | `docs/cenas/07-calculadora.md` |
+| 2 | Tecido: absorção, espalhamento e profundidade (Monte Carlo) | `docs/cenas/04-tecido.md` |
+| 3 | Célula: citocromo c oxidase, ATP e inflamação (esquemática) | `docs/cenas/05-celula.md` |
+| 4 | Protocolos MASCC/ISOO para prevenção | `docs/cenas/06-dosimetria.md` |
+| 5 | Calculadora de dose | `docs/cenas/07-calculadora.md` |
 
 Cada cena segue o molde: `src/model/<cena>.ts` (+ teste), `src/content/scenes/<cena>.ts`, `src/scenes/<cena>/` e registro em `src/scenes/registry.ts`. A numeração dos documentos segue o plano original; a das abas é a ordem de exibição.

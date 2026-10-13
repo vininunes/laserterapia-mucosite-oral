@@ -32,8 +32,8 @@ export function SceneLabel({
   position: Vec3
   text: string
   className?: string
-  /** `left`: o texto começa no ponto (rótulos ao lado de marcas). */
-  anchor?: 'center' | 'left'
+  /** `left`: o texto começa no ponto; `right`: termina no ponto. */
+  anchor?: 'center' | 'left' | 'right'
   /** O `<div>` do rótulo, para ajustar opacidade no `useFrame` da cena. */
   ref?: Ref<HTMLDivElement>
 }) {
@@ -62,13 +62,16 @@ export function SceneLabel({
   useFrame(() => {
     const g = group.current
     if (!g) return
+    // O useFrame roda antes de o renderer atualizar as matrizes: um rótulo
+    // recém-montado leria a matrixWorld antiga (sem o deslocamento do pai).
+    g.updateWorldMatrix(true, false)
     projected.setFromMatrixPosition(g.matrixWorld).project(camera)
     const show = projected.z < 1 && isWorldVisible(g)
     el.style.display = show ? '' : 'none'
     if (!show) return
     const x = ((projected.x + 1) / 2) * size.width
     const y = ((1 - projected.y) / 2) * size.height
-    el.style.transform = `translate3d(${x}px, ${y}px, 0) translate(${anchor === 'left' ? '0' : '-50%'}, -50%)`
+    el.style.transform = `translate3d(${x}px, ${y}px, 0) translate(${anchor === 'left' ? '0' : anchor === 'right' ? '-100%' : '-50%'}, -50%)`
   })
 
   return <group ref={group} position={position} />
