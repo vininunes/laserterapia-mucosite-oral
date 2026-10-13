@@ -7,6 +7,8 @@ export interface Reference {
   doi?: string
   /** Para que a referência é usada no projeto. */
   usage: string
+  /** Citação ainda não conferida na fonte (autores, ano, volume, DOI). A UI avisa. */
+  unverified?: boolean
 }
 
 export const references: Record<string, Reference> = {
@@ -42,5 +44,25 @@ export const references: Record<string, Reference> = {
       'Elad S, Cheng KKF, Lalla RV, et al. MASCC/ISOO clinical practice guidelines for the management of mucositis secondary to cancer therapy. Cancer. 2020;126:4423–4431.',
     doi: '10.1002/cncr.33100',
     usage: 'Diretriz MASCC/ISOO completa (contexto e níveis de evidência).',
+  },
+  'karu-1999': {
+    id: 'karu-1999',
+    citation:
+      'Karu T. Primary and secondary mechanisms of action of visible to near-IR radiation on cells. J Photochem Photobiol B. 1999;49(1):1–17.',
+    usage: 'Citocromo c oxidase como fotoaceptor; mecanismos primários e secundários.',
+    unverified: true,
+  },
+  'hamblin-2017': {
+    id: 'hamblin-2017',
+    citation:
+      'Hamblin MR. Mechanisms and applications of the anti-inflammatory effects of photobiomodulation. AIMS Biophys. 2017;4(3):337–361.',
+    usage: 'NO, ATP, sinalização por ROS e redução de mediadores inflamatórios.',
+    unverified: true,
+  },
+  'sonis-2004': {
+    id: 'sonis-2004',
+    citation: 'Sonis ST. The pathobiology of mucositis. Nat Rev Cancer. 2004;4(4):277–284.',
+    usage: 'Modelo biológico da mucosite oral (estresse oxidativo, cascata inflamatória, ulceração).',
+    unverified: true,
   },
 }

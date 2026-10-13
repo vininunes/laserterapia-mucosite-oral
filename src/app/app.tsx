@@ -1,6 +1,7 @@
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import { SimulationClock, SPEED_OPTIONS } from '../clock/clock'
+import { APP_SUBTITLE, APP_TITLE } from '../content/app'
 import { ClockContext, useClockDriver, useSimulationClock } from '../clock/use-simulation-clock'
 import { findScene, scenes } from '../scenes/registry'
 import { SceneCanvas } from '../scenes/scene-canvas'
@@ -68,7 +69,12 @@ export function App() {
 
   useHashSync({ clock, scene: scene.script.id, params, onExternalChange })
 
+  useEffect(() => {
+    document.title = `${scene.script.shortTitle} · ${APP_TITLE}`
+  }, [scene])
+
   const setParam = useCallback((key: string, value: number) => setParams((p) => ({ ...p, [key]: value })), [])
+  const applyParams = useCallback((values: NumericParams) => setParams((p) => ({ ...p, ...values })), [])
 
   return (
     <ClockContext.Provider value={clock}>
@@ -77,12 +83,18 @@ export function App() {
 
         <div className="pointer-events-none absolute inset-0 z-10 flex flex-col gap-2 p-2">
           <header className="flex items-start justify-between gap-2">
-            <FloatCard className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1.5 px-3 py-1.5">
-              <h1 className="text-sm font-semibold whitespace-nowrap">Laser e fotobiomodulação</h1>
+            <FloatCard className="flex min-w-0 flex-wrap items-center gap-x-4 gap-y-2 px-3 py-2">
+              <div className="min-w-0">
+                <h1 className="text-sm leading-tight font-semibold">{APP_TITLE}</h1>
+                <p className="text-[10px] leading-tight text-muted-foreground">{APP_SUBTITLE}</p>
+              </div>
               <Tabs value={scene.script.id} onValueChange={selectScene} className="min-w-0">
-                <TabsList className="h-7 max-w-full overflow-x-auto">
-                  {scenes.map((s) => (
-                    <TabsTrigger key={s.script.id} value={s.script.id} title={s.script.title}>
+                {/* `inline-flex`: o TabsList do DS não define display e, como bloco, os
+                    triggers (inline-flex) alinhavam pela linha de base e desciam. */}
+                <TabsList className="inline-flex h-8 max-w-full overflow-x-auto">
+                  {scenes.map((s, i) => (
+                    <TabsTrigger key={s.script.id} value={s.script.id} title={s.script.title} className="h-full">
+                      <span className="text-muted-foreground tabular-nums">{i + 1}</span>
                       {s.script.shortTitle}
                     </TabsTrigger>
                   ))}
@@ -96,7 +108,7 @@ export function App() {
 
           <div className="flex min-h-0 flex-1 flex-col justify-between gap-2 md:flex-row-reverse md:items-start">
             <div className="flex min-h-0 w-full shrink-0 flex-col gap-2 md:max-h-full md:w-80">
-              <ParameterPanel controls={scene.script.controls} params={params} onChange={setParam} />
+              <ParameterPanel controls={scene.script.controls} params={params} onChange={setParam} onApply={applyParams} />
               {scene.Readout && (
                 <Panel title="Grandezas">
                   <scene.Readout params={params} />

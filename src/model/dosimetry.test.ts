@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
 import { protocols } from '../content/protocols'
-import { deriveDose, doseLane, dosimetryModel, fluenceJcm2, spotRadius, DIMMED_EMPHASIS } from './dosimetry'
+import { deriveDose, deviceDose, doseLane, dosimetryModel, fluenceJcm2, spotRadius, DIMMED_EMPHASIS } from './dosimetry'
 
 const byId = (id: string) => protocols.find((p) => p.id === id)!
 
@@ -66,5 +66,28 @@ describe('dosimetryModel', () => {
 describe('spotRadius', () => {
   it('área π·r²', () => {
     expect(Math.PI * spotRadius(0.24) ** 2).toBeCloseTo(0.24)
+  })
+})
+
+describe('deviceDose', () => {
+  it('irradiância, fluência e energia a partir de potência, tempo e área', () => {
+    const d = deviceDose({ powerMw: 100, timeS: 10, areaCm2: 0.25 })
+    expect(d.irradianceMwCm2).toBeCloseTo(400)
+    expect(d.fluenceJcm2).toBeCloseTo(4)
+    expect(d.energyJ).toBeCloseTo(1)
+  })
+
+  it('reproduz os protocolos a partir da potência no spot', () => {
+    for (const p of protocols) {
+      const powerMw = p.irradianceMwCm2 * p.spotCm2
+      const d = deviceDose({ powerMw, timeS: p.timePerPointS, areaCm2: p.spotCm2 })
+      expect(d.fluenceJcm2).toBeCloseTo(deriveDose(p).computedFluenceJcm2)
+    }
+  })
+
+  it('mesma potência em spot menor → fluência maior', () => {
+    const big = deviceDose({ powerMw: 40, timeS: 10, areaCm2: 1 })
+    const small = deviceDose({ powerMw: 40, timeS: 10, areaCm2: 0.04 })
+    expect(small.fluenceJcm2 / big.fluenceJcm2).toBeCloseTo(25)
   })
 })

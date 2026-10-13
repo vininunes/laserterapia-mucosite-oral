@@ -1,3 +1,4 @@
+import { isKeyed } from '../content/types'
 import type { SceneDefinition } from '../scenes/types'
 import { decodeHashState, sanitizeParams, type NumericParams } from './hash-state'
 
@@ -10,7 +11,7 @@ export interface ResolvedState {
 
 /** Bounds de validação a partir dos controles da cena. */
 export function paramBounds(scene: SceneDefinition) {
-  return scene.script.controls.map((c) =>
+  return scene.script.controls.filter(isKeyed).map((c) =>
     c.kind === 'slider'
       ? { key: c.key, min: c.min, max: c.max }
       : c.kind === 'select'

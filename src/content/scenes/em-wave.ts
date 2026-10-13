@@ -11,8 +11,8 @@ export const emWaveTiming: EmWaveTiming = {
 
 export const emWaveScript: SceneScript<EmWaveParams> = {
   id: 'onda-em',
-  title: 'Cena 1 — A luz como onda eletromagnética',
-  shortTitle: 'Onda EM',
+  title: 'A luz do laser: onda eletromagnética, λ e energia do fóton',
+  shortTitle: 'A luz',
   duration: 42,
   defaults: { wavelengthA: 660, wavelengthB: 808, compare: 1, showB: 1 },
   controls: [
@@ -24,46 +24,46 @@ export const emWaveScript: SceneScript<EmWaveParams> = {
   steps: [
     {
       t: 0,
-      title: 'A luz é uma onda eletromagnética',
+      title: 'Por que começar pela luz?',
       caption:
-        'A luz é uma perturbação que se propaga pelo espaço. À esquerda, a fonte emite a onda, que avança para a direita. A curva colorida é o campo elétrico (E).',
+        'A fotobiomodulação (PBM) usa luz de baixa potência para prevenir e tratar a mucosite oral, a inflamação e ulceração da boca causada por quimioterapia e radioterapia. Para entender o tratamento, começamos pelo que o laser emite: uma onda eletromagnética que sai da fonte, à esquerda, e avança.',
       camera: { position: [0, 1.2, 12], target: [0, 0, 0] },
     },
     {
       t: emWaveTiming.bField,
       title: 'Campos elétrico e magnético',
       caption:
-        'Junto com o campo elétrico oscila um campo magnético (B). Os dois são perpendiculares entre si e à direção de propagação, e oscilam em fase. Aqui E e B aparecem do mesmo tamanho para facilitar a leitura.',
+        'A luz é feita de um campo elétrico (E) e um campo magnético (B) que oscilam juntos, perpendiculares entre si e à direção de propagação. É essa energia eletromagnética que o laser leva até a mucosa. Aqui E e B aparecem do mesmo tamanho para facilitar a leitura.',
       camera: { position: [-7.5, 4.5, 8], target: [0, 0, 0] },
     },
     {
       t: emWaveTiming.ruler,
-      title: 'Comprimento de onda',
+      title: 'Comprimento de onda: a primeira escolha do protocolo',
       caption:
-        'A distância entre duas cristas seguidas é o comprimento de onda (λ). Ele define a cor da luz visível e, fora dela, o tipo de radiação: ultravioleta abaixo e infravermelho acima.',
+        'A distância entre duas cristas é o comprimento de onda (λ). No tratamento ele define a cor do laser e até onde a luz chega no tecido (cena Tecido). Os protocolos recomendados pela MASCC/ISOO para prevenir a mucosite usam luz vermelha, de 632,8 a 660 nm.',
       camera: { position: [1, 1.8, 7.5], target: [1, 0.8, 0] },
     },
     {
       t: emWaveTiming.photon,
-      title: 'Energia do fóton',
+      title: 'A célula absorve fótons',
       caption:
-        'A luz também se comporta como pacotes de energia, os fótons. Cada fóton carrega E = hc/λ: quanto maior o comprimento de onda, menor a energia. Os valores estão no painel Grandezas.',
+        'A célula não absorve a onda inteira, e sim pacotes de energia, os fótons. Cada fóton carrega E = hc/λ; em 660 nm são cerca de 1,88 eV, pouco demais para ionizar ou quebrar o DNA. Por isso a PBM age por efeito fotoquímico, não por destruição do tecido (cena Célula).',
       camera: { position: [-4, 2.5, 8.5], target: [-1, 0, 0] },
     },
     {
       t: emWaveTiming.compare,
       title: 'Vermelho × infravermelho',
       caption:
-        'Por padrão, a comparação é entre 660 nm (vermelho) e 808 nm (infravermelho próximo). As duas ondas viajam à mesma velocidade; a de 808 nm tem cristas mais espaçadas, frequência menor e fótons menos energéticos.',
+        'Por padrão, 660 nm (vermelho, a faixa dos protocolos recomendados para prevenção) contra 808 nm (infravermelho próximo, também usado em estudos de PBM). As duas ondas viajam à mesma velocidade; a de 808 nm tem cristas mais espaçadas e fótons menos energéticos. O infravermelho é invisível: a curva tracejada é só representação.',
       camera: { position: [0, 0.5, 14], target: [0, 0, 0] },
     },
     {
       t: 35,
-      title: 'Tudo ligado',
+      title: 'O que levar para o tratamento',
       caption:
-        'Comprimento de onda, frequência e energia andam juntos: f = c/λ e E = h·f. Pause e mude λ no painel para ver a cor, o espaçamento das cristas e a energia mudarem ao mesmo tempo.',
+        'λ define a cor, a energia de cada fóton e a profundidade que a luz alcança na mucosa. A quantidade de luz entregue, a dose, depende de potência, tempo e área do spot (cenas Protocolos e Calculadora). Pause e mude λ no painel para ver tudo mudar junto.',
       camera: { position: [-8, 5, 11], target: [0, 0, 0] },
     },
   ],
-  references: ['bipm-si-2019', 'bruton-1996'],
+  references: ['bipm-si-2019', 'bruton-1996', 'zadik-2019'],
 }

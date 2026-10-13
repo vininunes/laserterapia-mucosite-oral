@@ -10,6 +10,7 @@ interface ParameterPanelProps {
   controls: ControlDef[]
   params: NumericParams
   onChange(key: string, value: number): void
+  onApply(values: NumericParams): void
   className?: string
 }
 
@@ -18,11 +19,27 @@ const fmt = (v: number, step: number) => {
   return v.toFixed(digits).replace('.', ',')
 }
 
-export function ParameterPanel({ controls, params, onChange, className }: ParameterPanelProps) {
+export function ParameterPanel({ controls, params, onChange, onApply, className }: ParameterPanelProps) {
   return (
     <Panel title="Parâmetros" className={className}>
       <div className="flex flex-col gap-4">
         {controls.map((c) => {
+          if (c.kind === 'presets') {
+            return (
+              <div key={c.label} className="flex flex-col gap-2">
+                <Label className="text-xs">{c.label}</Label>
+                {/* Sem valor controlado: é uma ação, volta ao placeholder depois de aplicar. */}
+                <Select
+                  items={[c.options.map((o, i) => ({ value: String(i), name: o.label }))]}
+                  value=""
+                  placeholder={c.placeholder}
+                  onValueChange={(v) => onApply(c.options[Number(v)].values)}
+                  className="w-full text-xs"
+                />
+              </div>
+            )
+          }
+
           const id = `param-${c.key}`
           const value = params[c.key]
 

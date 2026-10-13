@@ -72,7 +72,10 @@ export type DosimetryInput = {
 
 export const DIMMED_EMPHASIS = 0.25
 
-export function doseLane(t: number, p: DoseProtocol, index: number, input: DosimetryInput): DoseLaneState {
+/** O mínimo para animar um ponto: irradiância e tempo. */
+export type DoseTiming = Pick<DoseProtocol, 'irradianceMwCm2' | 'timePerPointS'>
+
+export function doseLane(t: number, p: DoseTiming, index: number, input: Omit<DosimetryInput, 'protocols'>): DoseLaneState {
   const elapsedS = Math.min(Math.max(t - input.start, 0), p.timePerPointS)
   return {
     elapsedS,
@@ -90,4 +93,29 @@ export const dosimetryModel: SceneModel<DosimetryInput, DoseLaneState[]> = (t, i
 /** Raio de um spot circular com a área dada (mesma unidade de comprimento). */
 export function spotRadius(areaCm2: number): number {
   return Math.sqrt(areaCm2 / Math.PI)
+}
+
+/** Os três ajustes do aparelho. */
+export type DeviceSettings = {
+  powerMw: number
+  timeS: number
+  areaCm2: number
+}
+
+export interface DeviceDose {
+  /** Irradiância = potência ÷ área (mW/cm²). */
+  irradianceMwCm2: number
+  /** Fluência = potência × tempo ÷ área (J/cm²). */
+  fluenceJcm2: number
+  /** Energia entregue no ponto = potência × tempo (J). */
+  energyJ: number
+}
+
+export function deviceDose({ powerMw, timeS, areaCm2 }: DeviceSettings): DeviceDose {
+  const irradianceMwCm2 = powerMw / areaCm2
+  return {
+    irradianceMwCm2,
+    fluenceJcm2: fluenceJcm2(irradianceMwCm2, timeS),
+    energyJ: (powerMw * timeS) / 1000,
+  }
 }

@@ -26,11 +26,14 @@ export function SceneLabel({
   position,
   text,
   className = '',
+  anchor = 'center',
   ref,
 }: {
   position: Vec3
   text: string
   className?: string
+  /** `left`: o texto começa no ponto (rótulos ao lado de marcas). */
+  anchor?: 'center' | 'left'
   /** O `<div>` do rótulo, para ajustar opacidade no `useFrame` da cena. */
   ref?: Ref<HTMLDivElement>
 }) {
@@ -65,7 +68,7 @@ export function SceneLabel({
     if (!show) return
     const x = ((projected.x + 1) / 2) * size.width
     const y = ((1 - projected.y) / 2) * size.height
-    el.style.transform = `translate3d(${x}px, ${y}px, 0) translate(-50%, -50%)`
+    el.style.transform = `translate3d(${x}px, ${y}px, 0) translate(${anchor === 'left' ? '0' : '-50%'}, -50%)`
   })
 
   return <group ref={group} position={position} />

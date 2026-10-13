@@ -38,8 +38,8 @@ export type DosimetryParams = {
 
 export const dosimetryScript: SceneScript<DosimetryParams> = {
   id: 'dosimetria',
-  title: 'Cena 6 — Dosimetria: protocolos MASCC/ISOO para prevenção',
-  shortTitle: 'Dosimetria',
+  title: 'Protocolos MASCC/ISOO para prevenção da mucosite oral',
+  shortTitle: 'Protocolos',
   duration: DOSE_START + longest + 6,
   defaults: { focus: -1 },
   controls: [
@@ -61,7 +61,7 @@ export const dosimetryScript: SceneScript<DosimetryParams> = {
       t: 0,
       title: 'Cinco protocolos recomendados',
       caption:
-        'A diretriz MASCC/ISOO recomenda cinco protocolos de fotobiomodulação intraoral para prevenir mucosite oral em adultos, cada um vindo de um estudo. Spots e sondas estão em escala real: cada quadrado da grade tem 1 cm.',
+        'Para prevenir a mucosite oral em adultos que fazem transplante de células-tronco hematopoéticas (TCTH) ou radioterapia de cabeça e pescoço, com ou sem quimioterapia, a diretriz MASCC/ISOO recomenda cinco protocolos de PBM intraoral, cada um vindo de um estudo. Spots e sondas estão em escala real: cada quadrado da grade tem 1 cm.',
       camera: { position: [0, 7.5, 10.5], target: [0, 0.4, 0] },
     },
     {

@@ -26,6 +26,15 @@ export type ControlDef =
     }
   | { kind: 'select'; key: string; label: string; options: { value: number; label: string }[] }
   | { kind: 'toggle'; key: string; label: string }
+  /** Ação, não parâmetro: aplica vários valores de uma vez. Não vai para a URL. */
+  | { kind: 'presets'; label: string; placeholder: string; options: { label: string; values: NumericParams }[] }
+
+/** Controles que têm um parâmetro próprio (todos menos `presets`). */
+export type KeyedControlDef = Exclude<ControlDef, { kind: 'presets' }>
+
+export function isKeyed(c: ControlDef): c is KeyedControlDef {
+  return c.kind !== 'presets'
+}
 
 export interface SceneScript<P extends NumericParams = NumericParams> {
   id: string
