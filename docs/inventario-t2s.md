@@ -6,7 +6,7 @@ Levantamento da Fase 0 (somente leitura). Lista o que pode ser copiado do ecossi
 |---|---|
 | Fonte A | `~/technomar/pattern/vts-application` — commit `d909622fadd9335ddd2438a660a76945d5a2320c` (09/10/2026), árvore limpa |
 | Fonte B | `~/technomar/pattern/design-system` (`@technomar/design-system` 0.1.0) — commit `3b42c90728e19b032e68b6e948b604f1a55dd544` (09/09/2026) |
-| Documentação lida | `docs/applications/design-system/design-system-application.md`, `docs/applications/t2s/...` (índice), `CLAUDE.md` do vts |
+| Documentação lida | `docs/applications/design-system/design-system-application.md`, `CLAUDE.md` do vts |
 | Recomendação | Copiar **primitivos e tokens da Fonte B** (já desacoplados) e reescrever **player** e **painel** com base no visual da Fonte A |
 | Stack herdada | React 19, Tailwind CSS v4, Radix UI, `class-variance-authority`, `clsx` + `tailwind-merge`, `lucide-react`, `framer-motion` |
 | Fora do escopo | Mapbox, deck.gl, jotai, react-query, i18next, rotas, autenticação |
