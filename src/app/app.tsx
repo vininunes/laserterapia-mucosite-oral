@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from 'react'
 
-import { SimulationClock } from '../clock/clock'
+import { SimulationClock, SPEED_OPTIONS } from '../clock/clock'
 import { ClockContext, useClockDriver, useSimulationClock } from '../clock/use-simulation-clock'
 import { findScene, scenes } from '../scenes/registry'
 import { SceneCanvas } from '../scenes/scene-canvas'
@@ -23,7 +23,7 @@ function ConnectedPlayer({ scene }: { scene: SceneDefinition }) {
     () => scene.script.steps.map((s) => ({ t: s.t, label: s.title })),
     [scene.script.steps]
   )
-  return <Player {...clock} markers={markers} />
+  return <Player {...clock} markers={markers} speedOptions={SPEED_OPTIONS} />
 }
 
 export function App() {

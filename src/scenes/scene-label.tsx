@@ -6,7 +6,7 @@ import { Vector3, type Group, type Object3D } from 'three'
 import type { Vec3 } from '../model/types'
 
 const BASE_CLASS =
-  'pointer-events-none absolute top-0 left-0 z-[5] rounded px-1 text-[11px] font-medium whitespace-nowrap text-foreground select-none'
+  'pointer-events-none absolute top-0 left-0 z-[5] rounded bg-background/70 px-1 text-[11px] font-medium whitespace-nowrap text-foreground select-none'
 
 function isWorldVisible(o: Object3D | null): boolean {
   for (let n = o; n; n = n.parent) if (!n.visible) return false

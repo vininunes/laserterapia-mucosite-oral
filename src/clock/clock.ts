@@ -14,7 +14,7 @@ export interface ClockSnapshot {
   duration: number
 }
 
-export const SPEED_OPTIONS = [0.25, 0.5, 1, 2, 4] as const
+export const SPEED_OPTIONS = [0.25, 0.5, 1, 2, 4, 8, 16] as const
 
 /** Maior passo aceito por frame: evita um salto após a aba ficar oculta. */
 export const MAX_FRAME_DT = 0.1

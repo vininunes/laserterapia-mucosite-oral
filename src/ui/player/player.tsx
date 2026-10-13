@@ -30,7 +30,7 @@ export interface PlayerProps {
   className?: string
 }
 
-const DEFAULT_SPEEDS = [0.25, 0.5, 1, 2, 4] as const
+const DEFAULT_SPEEDS = [0.25, 0.5, 1, 2, 4, 8, 16] as const
 
 const speedLabel = (speed: number) => `${String(speed).replace('.', ',')}×`
 

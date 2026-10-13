@@ -23,4 +23,24 @@ export const references: Record<string, Reference> = {
     url: 'http://www.physics.sfasu.edu/astro/color/spectra.html',
     usage: 'Aproximação λ → RGB usada para colorir o feixe. Convenção de visualização, não colorimetria.',
   },
+  'zadik-2019': {
+    id: 'zadik-2019',
+    citation:
+      'Zadik Y, Arany PR, Fregnani ER, Bossi P, Antunes HS, Bensadoun RJ, Gueiros LA, Majorana A, Nair RG, Ranna V, Tissing WJE, Vaddi A, Lubart R, Migliorati CA, Lalla RV, Cheng KKF, Elad S. Systematic review of photobiomodulation for the management of oral mucositis in cancer patients and clinical practice guidelines. Support Care Cancer. 2019;27(10):3969–3983.',
+    doi: '10.1007/s00520-019-04890-2',
+    usage: 'Protocolos de PBM recomendados para prevenção de mucosite oral (parâmetros da cena de dosimetria).',
+  },
+  'mascc-isoo-2020-pbm': {
+    id: 'mascc-isoo-2020-pbm',
+    citation:
+      'MASCC/ISOO. 2019/2020 Clinical Practice Guidelines for the Management of Mucositis — Short Summary #3: Photobiomodulation. Mucositis Study Group.',
+    usage: 'Resumo da diretriz: protocolos recomendados, níveis de evidência e notas de segurança.',
+  },
+  'elad-2020': {
+    id: 'elad-2020',
+    citation:
+      'Elad S, Cheng KKF, Lalla RV, et al. MASCC/ISOO clinical practice guidelines for the management of mucositis secondary to cancer therapy. Cancer. 2020;126:4423–4431.',
+    doi: '10.1002/cncr.33100',
+    usage: 'Diretriz MASCC/ISOO completa (contexto e níveis de evidência).',
+  },
 }

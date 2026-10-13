@@ -36,5 +36,6 @@ Atalhos: espaço (play/pausa), ← → (±1 s).
 | # | Cena | Documento |
 |---|---|---|
 | 1 | Onda eletromagnética | `docs/cenas/01-onda-em.md` |
+| 6 | Dosimetria: protocolos MASCC/ISOO | `docs/cenas/06-dosimetria.md` |
 
 Cada cena segue o molde da cena 1: `src/model/<cena>.ts` (+ teste), `src/content/scenes/<cena>.ts`, `src/scenes/<cena>/` e registro em `src/scenes/registry.ts`.
