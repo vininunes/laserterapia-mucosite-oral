@@ -33,9 +33,13 @@ Atalhos: espaço (play/pausa), ← → (±1 s).
 
 ## Cenas
 
-| # | Cena | Documento |
-|---|---|---|
-| 1 | Onda eletromagnética | `docs/cenas/01-onda-em.md` |
-| 6 | Dosimetria: protocolos MASCC/ISOO | `docs/cenas/06-dosimetria.md` |
+Ordem das abas, da física da luz ao tratamento:
 
-Cada cena segue o molde da cena 1: `src/model/<cena>.ts` (+ teste), `src/content/scenes/<cena>.ts`, `src/scenes/<cena>/` e registro em `src/scenes/registry.ts`.
+| Aba | Cena | Documento |
+|---|---|---|
+| 1 | A luz: onda eletromagnética, λ e energia do fóton | `docs/cenas/01-onda-em.md` |
+| 2 | Célula: citocromo c oxidase, ATP e inflamação (esquemática) | `docs/cenas/05-celula.md` |
+| 3 | Protocolos MASCC/ISOO para prevenção | `docs/cenas/06-dosimetria.md` |
+| 4 | Calculadora de dose | `docs/cenas/07-calculadora.md` |
+
+Cada cena segue o molde: `src/model/<cena>.ts` (+ teste), `src/content/scenes/<cena>.ts`, `src/scenes/<cena>/` e registro em `src/scenes/registry.ts`. A numeração dos documentos segue o plano original; a das abas é a ordem de exibição.
