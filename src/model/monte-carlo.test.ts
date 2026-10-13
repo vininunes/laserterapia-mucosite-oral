@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { depthReachedBy, Fate, mulberry32, pathPosition, runMonteCarlo, sampleHgCos, type McConfig } from './monte-carlo'
+import { depthReachedBy, Fate, mulberry32, pathEnd, pathPosition, runMonteCarlo, sampleHgCos, type McConfig } from './monte-carlo'
 
 /**
  * Coeficientes de FIXTURE: números redondos só para testar a física do
@@ -15,6 +15,8 @@ const fixture = (overrides: Partial<McConfig> = {}): McConfig => ({
   seed: 42,
   recordPaths: 50,
   maxSteps: 400,
+  recordEvery: 1,
+  maxRecorded: 401,
   spotRadiusCm: 0.1,
   binCm: 0.005,
   ...overrides,
@@ -85,7 +87,7 @@ describe('runMonteCarlo', () => {
   it('trajetórias começam na superfície e terminam com o destino registrado', () => {
     const r = runMonteCarlo(fixture())
     for (let i = 0; i < 50; i++) {
-      expect(r.paths[i * 401 * 3 + 2]).toBe(0)
+      expect(r.paths[i * r.pathStride + 2]).toBe(0)
       expect(r.pathLengths[i]).toBeGreaterThan(1)
       expect([Fate.Absorbed, Fate.Remitted, Fate.Transmitted, Fate.Lost]).toContain(r.fates[i])
     }
@@ -96,10 +98,33 @@ describe('pathPosition', () => {
   it('interpola entre vértices e termina no fim da trajetória', () => {
     const r = runMonteCarlo(fixture())
     const out: [number, number, number] = [0, 0, 0]
-    expect(pathPosition(r, 400, 0, -1, 10, out)).toBe(false)
-    expect(pathPosition(r, 400, 0, 0, 10, out)).toBe(true)
+    expect(pathPosition(r, 0, -1, 10, out)).toBe(false)
+    expect(pathPosition(r, 0, 0, 10, out)).toBe(true)
     expect(out[2]).toBe(0)
     const end = (r.pathLengths[0] - 1) / 10
-    expect(pathPosition(r, 400, 0, end + 0.01, 10, out)).toBe(false)
+    expect(pathPosition(r, 0, end + 0.01, 10, out)).toBe(false)
+  })
+})
+
+describe('gravação subamostrada', () => {
+  it('não muda a estatística, só o que é desenhado', () => {
+    const full = runMonteCarlo(fixture())
+    const sparse = runMonteCarlo(fixture({ recordEvery: 10, maxRecorded: 20 }))
+    expect(sparse.absorbedByDepth).toEqual(full.absorbedByDepth)
+    expect(sparse.remitted).toBe(full.remitted)
+    for (let i = 0; i < 50; i++) expect(sparse.pathLengths[i]).toBeLessThanOrEqual(20)
+  })
+
+  it('o ponto de absorção é gravado quando a trajetória cabe no teto', () => {
+    const full = runMonteCarlo(fixture())
+    const sparse = runMonteCarlo(fixture({ recordEvery: 7, maxRecorded: 401 }))
+    for (let i = 0; i < 50; i++) {
+      if (full.fates[i] !== Fate.Absorbed) continue
+      const a: [number, number, number] = [0, 0, 0]
+      const b: [number, number, number] = [0, 0, 0]
+      pathEnd(full, i, a)
+      pathEnd(sparse, i, b)
+      expect(b).toEqual(a)
+    }
   })
 })

@@ -8,6 +8,18 @@ export const DOSE_START = 3
 
 export const protocolName = (p: PbmProtocol) => `${p.context} · ${formatCompact(p.wavelengthNm)} nm`
 
+/**
+ * Nome que distingue protocolos com o mesmo contexto e λ (os dois RT + QT
+ * 660 nm diferem pelo spot).
+ */
+export function protocolLabel(p: PbmProtocol): string {
+  const twins = protocols.filter((q) => q.context === p.context && q.wavelengthNm === p.wavelengthNm)
+  return twins.length > 1 ? `${protocolName(p)} (${formatCompact(p.spotCm2)} cm²)` : protocolName(p)
+}
+
+const joinNames = (names: string[]) =>
+  names.length > 1 ? `${names.slice(0, -1).join(', ')} e ${names[names.length - 1]}` : names[0]
+
 /** Etapa gerada a partir dos dados: o instante em que protocolos completam o ponto. */
 function endStep(group: PbmProtocol[]): ScriptStep {
   const time = group[0].timePerPointS
@@ -16,12 +28,12 @@ function endStep(group: PbmProtocol[]): ScriptStep {
     const mismatch = d.fluenceMismatch
       ? ` O resumo publica ${formatNumber(p.reportedFluenceJcm2, 1)} J/cm², mas ${formatCompact(p.irradianceMwCm2)} mW/cm² × ${time} s = ${formatNumber(d.computedFluenceJcm2, 2)} J/cm²: por isso a barra passa da marca. Conferir no artigo original.`
       : ''
-    return `${protocolName(p)} (spot ${formatCompact(p.spotCm2)} cm²): ${formatNumber(d.computedFluenceJcm2, 2)} J/cm² no ponto; ${formatRange(p.points, String)} pontos por sessão, ${formatRange(d.sessionTimeS, formatDuration)} de irradiação.${mismatch}`
+    return `${protocolLabel(p)}: o ponto recebe ${formatNumber(d.computedFluenceJcm2, 2)} J/cm². A sessão repete isso em ${formatRange(p.points, String)} pontos, somando ${formatRange(d.sessionTimeS, formatDuration)} de laser ligado.${mismatch}`
   })
   return {
     t: DOSE_START + time,
-    title: `${time} s: ${group.length > 1 ? `${group.length} protocolos completam` : 'protocolo completa'} o ponto`,
-    caption: parts.join(' '),
+    title: `${joinNames(group.map(protocolLabel))} ${group.length > 1 ? 'completam' : 'completa'} o ponto em ${time} s`,
+    caption: `O laser fica ${time} s parado sobre o ponto e então passa para o próximo. ${parts.join(' ')}`,
   }
 }
 
@@ -66,9 +78,9 @@ export const dosimetryScript: SceneScript<DosimetryParams> = {
     },
     {
       t: DOSE_START,
-      title: 'Fluência = irradiância × tempo',
+      title: 'O que é um ponto e como a dose sobe',
       caption:
-        'As sondas ligam juntas. A barra atrás de cada spot mostra a fluência acumulada (J/cm²) e sobe na velocidade da irradiância (mW/cm²): irradiância alta chega rápido à dose; baixa precisa de mais tempo. O anel marca a fluência publicada.',
+        'Um "ponto" é um local da mucosa oral onde a ponta do laser fica parada, iluminando a área do spot. Cada protocolo irradia vários pontos por sessão, um depois do outro. Em velocidade 1× a simulação corre em tempo real: o cronômetro abaixo de cada spot é o tempo que o laser fica sobre aquele ponto. A barra mostra a fluência acumulada (J/cm²) e o anel marca a fluência publicada.',
       camera: { position: [0, 3.6, 7.2], target: [0, 0.7, 0] },
     },
     ...byTime.map(endStep),

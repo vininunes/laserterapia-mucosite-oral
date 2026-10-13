@@ -30,6 +30,10 @@ export interface McConfig {
   recordPaths: number
   /** Interações máximas por fóton; acima disso ele é contado como "perdido". */
   maxSteps: number
+  /** Grava um vértice a cada `recordEvery` interações (o cálculo usa todas). */
+  recordEvery: number
+  /** Teto de vértices gravados por trajetória; o resto da trajetória não é desenhado. */
+  maxRecorded: number
   spotRadiusCm: number
   /** Resolução do histograma de profundidade, cm. */
   binCm: number
@@ -43,8 +47,10 @@ export const enum Fate {
 }
 
 export interface McResult {
-  /** xyz (cm) de cada vértice das trajetórias guardadas: recordPaths × (maxSteps + 1) × 3. */
+  /** xyz (cm) dos vértices gravados: recordPaths × maxRecorded × 3. */
   paths: Float32Array
+  /** Floats por trajetória em `paths` (maxRecorded × 3). */
+  pathStride: number
   /** Vértices válidos de cada trajetória guardada. */
   pathLengths: Uint16Array
   fates: Uint8Array
@@ -99,14 +105,14 @@ function scatter(dir: [number, number, number], cosT: number, phi: number) {
 }
 
 export function runMonteCarlo(config: McConfig): McResult {
-  const { layers, photons, recordPaths, maxSteps, spotRadiusCm, binCm } = config
+  const { layers, photons, recordPaths, maxSteps, spotRadiusCm, binCm, recordEvery, maxRecorded } = config
   const rand = mulberry32(config.seed)
 
   const bounds: number[] = [0]
   for (const l of layers) bounds.push(bounds[bounds.length - 1] + l.thicknessCm)
   const total = bounds[bounds.length - 1]
 
-  const stride = (maxSteps + 1) * 3
+  const stride = maxRecorded * 3
   const paths = new Float32Array(recordPaths * stride)
   const pathLengths = new Uint16Array(recordPaths)
   const fates = new Uint8Array(recordPaths)
@@ -132,7 +138,7 @@ export function runMonteCarlo(config: McConfig): McResult {
     const record = p < recordPaths
     let vertices = 0
     const push = () => {
-      if (!record) return
+      if (!record || vertices >= maxRecorded) return
       const o = p * stride + vertices * 3
       paths[o] = x
       paths[o + 1] = y
@@ -180,12 +186,15 @@ export function runMonteCarlo(config: McConfig): McResult {
         }
       }
       if (z > maxZ) maxZ = z
-      push()
+      // Grava a cada `recordEvery` interações e sempre no último ponto (fuga).
+      if (escaped || (step + 1) % recordEvery === 0) push()
       if (escaped) break
 
       const l = layers[layer]
       if (rand() < l.muaPerCm / (l.muaPerCm + l.musPerCm)) {
         fate = Fate.Absorbed
+        // O ponto de absorção é sempre gravado (pode não cair num múltiplo de recordEvery).
+        if ((step + 1) % recordEvery !== 0) push()
         absorbedByLayer[layer]++
         absorbedByDepth[Math.min(Math.floor(z / binCm), bins - 1)]++
         break
@@ -215,6 +224,7 @@ export function runMonteCarlo(config: McConfig): McResult {
 
   return {
     paths,
+    pathStride: stride,
     pathLengths,
     fates,
     absorbedByLayer,
@@ -238,28 +248,40 @@ export function depthReachedBy(result: McResult, fraction: number): number {
 }
 
 /**
- * Vértice da trajetória `i` em `t` (s desde o lançamento), andando
- * `stepsPerSecond` interações por segundo, com interpolação linear entre
- * vértices. Devolve `null` antes do lançamento ou depois do fim da trajetória.
+ * Posição na trajetória gravada `i` em `t` (s desde o lançamento), andando
+ * `verticesPerSecond` vértices gravados por segundo, com interpolação linear.
+ * Devolve `false` antes do lançamento ou depois do fim da trajetória.
  */
 export function pathPosition(
   result: McResult,
-  maxSteps: number,
   i: number,
   t: number,
-  stepsPerSecond: number,
+  verticesPerSecond: number,
   out: [number, number, number]
 ): boolean {
   if (t < 0) return false
   const n = result.pathLengths[i]
-  const f = t * stepsPerSecond
+  const f = t * verticesPerSecond
   if (f >= n - 1) return false
   const k = Math.floor(f)
   const u = f - k
-  const o = i * (maxSteps + 1) * 3 + k * 3
+  const o = i * result.pathStride + k * 3
   const p = result.paths
   out[0] = p[o] + (p[o + 3] - p[o]) * u
   out[1] = p[o + 1] + (p[o + 4] - p[o + 1]) * u
   out[2] = p[o + 2] + (p[o + 5] - p[o + 2]) * u
   return true
+}
+
+/** Último vértice gravado da trajetória `i` (ponto de absorção ou de fuga). */
+export function pathEnd(result: McResult, i: number, out: [number, number, number]) {
+  const o = i * result.pathStride + (result.pathLengths[i] - 1) * 3
+  out[0] = result.paths[o]
+  out[1] = result.paths[o + 1]
+  out[2] = result.paths[o + 2]
+}
+
+/** Duração (s) da animação da trajetória `i`. */
+export function pathDuration(result: McResult, i: number, verticesPerSecond: number): number {
+  return Math.max(result.pathLengths[i] - 1, 0) / verticesPerSecond
 }
