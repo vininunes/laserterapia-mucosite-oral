@@ -8,6 +8,7 @@ import type { SceneDefinition } from '../scenes/types'
 import { decodeHashState, type NumericParams } from '../state/hash-state'
 import { resolveHashState } from '../state/initial-state'
 import { useHashSync } from '../state/use-hash-sync'
+import { Panel } from '../ui/panel'
 import { Player } from '../ui/player/player'
 import { Tabs, TabsList, TabsTrigger } from '../ui/primitives/tabs'
 import { FloatCard } from '../ui/primitives/float-card'
@@ -74,7 +75,7 @@ export function App() {
       <div className="relative h-dvh w-full overflow-hidden bg-background text-foreground">
         <SceneCanvas scene={scene} params={params} className="!absolute inset-0" />
 
-        <div className="pointer-events-none absolute inset-0 flex flex-col gap-2 p-2">
+        <div className="pointer-events-none absolute inset-0 z-10 flex flex-col gap-2 p-2">
           <header className="flex items-start justify-between gap-2">
             <FloatCard className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1.5 px-3 py-1.5">
               <h1 className="text-sm font-semibold whitespace-nowrap">Laser e fotobiomodulação</h1>
@@ -94,12 +95,14 @@ export function App() {
           </header>
 
           <div className="flex min-h-0 flex-1 flex-col justify-between gap-2 md:flex-row-reverse md:items-start">
-            <ParameterPanel
-              controls={scene.script.controls}
-              params={params}
-              onChange={setParam}
-              className="w-full shrink-0 md:w-72"
-            />
+            <div className="flex min-h-0 w-full shrink-0 flex-col gap-2 md:max-h-full md:w-80">
+              <ParameterPanel controls={scene.script.controls} params={params} onChange={setParam} />
+              {scene.Readout && (
+                <Panel title="Grandezas">
+                  <scene.Readout params={params} />
+                </Panel>
+              )}
+            </div>
             <Caption
               steps={scene.script.steps}
               illustrative={scene.script.illustrative}

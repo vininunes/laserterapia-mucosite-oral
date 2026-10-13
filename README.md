@@ -24,9 +24,17 @@ yarn preview    # serve o build
 |---|---|---|
 | Modelo | `src/model/` | TypeScript puro, sem React nem Three.js. `(t, params) → estado`, determinístico |
 | Roteiro | `src/content/` | Dados: etapas, legendas, câmera, parâmetros científicos com fonte, referências |
-| Renderização | `src/scenes/` | Componentes R3F que só leem o modelo |
+| Renderização | `src/scenes/` | Componentes R3F que só leem o modelo; rótulos 3D com `SceneLabel` |
 | Relógio | `src/clock/` | `SimulationClock` (puro) + hooks; o player não conhece Three.js e as cenas não conhecem o player |
 | Estado da URL | `src/state/` | Cena, parâmetros, `t` e velocidade no hash (`#cena=…&t=…&v=…&p.<param>=…`) |
 | UI | `src/ui/` | Primitivos do design system, player e painel |
 
 Atalhos: espaço (play/pausa), ← → (±1 s).
+
+## Cenas
+
+| # | Cena | Documento |
+|---|---|---|
+| 1 | Onda eletromagnética | `docs/cenas/01-onda-em.md` |
+
+Cada cena segue o molde da cena 1: `src/model/<cena>.ts` (+ teste), `src/content/scenes/<cena>.ts`, `src/scenes/<cena>/` e registro em `src/scenes/registry.ts`.
