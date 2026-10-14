@@ -36,6 +36,8 @@ export function CalculatorScene({ params }: SceneProps<CalculatorParams>) {
         name={`${formatCompact(params.powerMw)} mW · ${formatCompact(params.timeS)} s · ${formatCompact(params.areaCm2)} cm²`}
         spec={`${formatNumber(dose.irradianceMwCm2, 0)} mW/cm² → ${formatNumber(dose.fluenceJcm2, 2)} J/cm²`}
         start={CALC_START}
+        labels="stack"
+        markLeaders
         marks={protocols.map((p) => ({
           fluenceJcm2: p.reportedFluenceJcm2,
           muted: true,

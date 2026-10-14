@@ -6,13 +6,25 @@ import { useClockFrame } from '../../clock/use-simulation-clock'
 import { doseLane, spotRadius, type DoseTiming } from '../../model/dosimetry'
 import { wavelengthToRgb } from '../../model/spectrum'
 import { formatNumber } from '../../ui/format-number'
+import { cn } from '../../ui/lib/cn'
 import { useThemeTokens } from '../../ui/theme/theme-tokens'
+import { LeaderLabels } from '../leader-labels'
 import { SceneLabel } from '../scene-label'
 
 /** Escala real: 1 unidade = 1 cm. Só a altura da barra de fluência é fora de escala. */
 export const PROBE_HEIGHT = 1.6
 export const BAR_Z = -1.3
 export const LABEL_Z = 1.25
+/** Marca o rótulo empilhado para o `LabelDeclutter` da cena achá-lo. */
+export const COMPACT_LABEL_CLASS = 'dose-lane-label'
+
+/**
+ * Rótulos da pista: `rows` = nome, spec e cronômetro em três rótulos;
+ * `stack` = os três num rótulo só (não se encavalam quando a câmera está
+ * longe); `narrow` = rótulo estreito para várias pistas lado a lado em tela
+ * pequena (o nome quebra no " · " e o spec some).
+ */
+export type LaneLabels = 'rows' | 'stack' | 'narrow'
 export const BAR_PER_JCM2 = 0.32
 /** Acima disso a barra para de crescer e o rótulo avisa. */
 export const BAR_MAX_HEIGHT = 3.2
@@ -51,13 +63,32 @@ export interface DoseLaneProps {
   /** Ênfase visual (1 = normal). */
   emphasis?: number
   marks?: FluenceMark[]
+  labels?: LaneLabels
+  /**
+   * Rótulos dos anéis numa coluna à direita, com linha-guia até o anel (para
+   * várias marcas próximas). O valor da fluência vai para a esquerda da barra.
+   */
+  markLeaders?: boolean
 }
 
 /**
  * Um ponto de irradiação: spot em escala real, feixe na cor do λ (física),
  * sonda, barra da fluência acumulada (I × t) e anéis de referência.
  */
-export function DoseLane({ x, wavelengthNm, timing, spotCm2, name, spec, start, emphasis = 1, marks = [] }: DoseLaneProps) {
+export function DoseLane({
+  x,
+  wavelengthNm,
+  timing,
+  spotCm2,
+  name,
+  spec,
+  start,
+  emphasis = 1,
+  marks = [],
+  labels = 'rows',
+  markLeaders = false,
+}: DoseLaneProps) {
+  const stacked = labels !== 'rows'
   const tokens = useThemeTokens()
   const radius = spotRadius(spotCm2)
   const beamColor = useMemo(() => {
@@ -95,7 +126,7 @@ export function DoseLane({ x, wavelengthNm, timing, spotCm2, name, spec, start, 
       b.position.y = h / 2
       setOpacity(b, e)
       // O valor acompanha o topo da barra.
-      if (fluenceAnchor.current) fluenceAnchor.current.position.y = h + 0.3
+      if (fluenceAnchor.current) fluenceAnchor.current.position.y = markLeaders ? h : h + 0.3
     }
 
     for (const el of [nameLabel.current, specLabel.current, timerLabel.current, ...marksGroup.current]) {
@@ -106,8 +137,11 @@ export function DoseLane({ x, wavelengthNm, timing, spotCm2, name, spec, start, 
       f.textContent = `${formatNumber(s.fluenceJcm2, 2)} J/cm²${fullHeight > BAR_MAX_HEIGHT ? ' ↑ fora da escala' : ''}`
       setLabelOpacity(f, s.elapsedS > 0 ? e : 0)
     }
-    if (timerLabel.current) {
-      timerLabel.current.textContent = `${formatNumber(s.elapsedS, 1)} / ${formatNumber(timing.timePerPointS, 0)} s`
+    const timer = `${formatNumber(s.elapsedS, 1)} / ${formatNumber(timing.timePerPointS, 0)} s`
+    if (timerLabel.current) timerLabel.current.textContent = timer
+    if (stacked && nameLabel.current) {
+      const lines = labels === 'narrow' ? [...name.split(' · '), timer] : [name, spec, timer]
+      nameLabel.current.textContent = lines.join('\n')
     }
   })
 
@@ -146,7 +180,7 @@ export function DoseLane({ x, wavelengthNm, timing, spotCm2, name, spec, start, 
                 <ringGeometry args={m.muted ? [0.2, 0.23, 40] : [0.2, 0.28, 40]} />
                 <meshBasicMaterial color={color} side={DoubleSide} transparent opacity={emphasis} />
               </mesh>
-              {m.label && (
+              {m.label && !markLeaders && (
                 <SceneLabel
                   ref={(el) => {
                     if (el) marksGroup.current[i] = el
@@ -160,14 +194,52 @@ export function DoseLane({ x, wavelengthNm, timing, spotCm2, name, spec, start, 
             </group>
           )
         })}
+        {markLeaders && (
+          <LeaderLabels
+            opacity={emphasis}
+            items={marks.flatMap((m) =>
+              m.label
+                ? [
+                    {
+                      position: [0.28, Math.min(m.fluenceJcm2 * BAR_PER_JCM2, BAR_MAX_HEIGHT), 0] as const,
+                      text: m.label,
+                      className: `text-[10px] ${m.warn ? 'text-warning' : 'text-muted-foreground'}`,
+                    },
+                  ]
+                : []
+            )}
+          />
+        )}
         <group ref={fluenceAnchor}>
-          <SceneLabel ref={fluenceLabel} position={[0, 0, 0]} text="" className="tabular-nums" />
+          <SceneLabel
+            ref={fluenceLabel}
+            position={markLeaders ? [-0.3, 0, 0] : [0, 0, 0]}
+            anchor={markLeaders ? 'right' : 'center'}
+            text=""
+            className={cn('tabular-nums', labels === 'narrow' && 'text-[10px]')}
+          />
         </group>
       </group>
 
-      <SceneLabel ref={nameLabel} position={[0, 0, LABEL_Z]} text={name} />
-      <SceneLabel ref={specLabel} position={[0, 0, LABEL_Z + 0.45]} text={spec} className="text-muted-foreground" />
-      <SceneLabel ref={timerLabel} position={[0, 0, LABEL_Z + 0.9]} text="" className="text-muted-foreground tabular-nums" />
+      {stacked ? (
+        <SceneLabel
+          ref={nameLabel}
+          position={[0, 0, LABEL_Z]}
+          anchor="top"
+          text={name}
+          className={cn(
+            COMPACT_LABEL_CLASS,
+            'text-center leading-tight tabular-nums whitespace-pre',
+            labels === 'narrow' && 'text-[10px]'
+          )}
+        />
+      ) : (
+        <>
+          <SceneLabel ref={nameLabel} position={[0, 0, LABEL_Z]} text={name} />
+          <SceneLabel ref={specLabel} position={[0, 0, LABEL_Z + 0.45]} text={spec} className="text-muted-foreground" />
+          <SceneLabel ref={timerLabel} position={[0, 0, LABEL_Z + 0.9]} text="" className="text-muted-foreground tabular-nums" />
+        </>
+      )}
     </group>
   )
 }
