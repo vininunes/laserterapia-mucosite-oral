@@ -6,7 +6,7 @@ Visualizações 3D interativas sobre ondas eletromagnéticas, funcionamento do l
 |---|---|
 | Stack | Vite 7, React 19, TypeScript, React Three Fiber 9, drei 10, Tailwind CSS 4 |
 | UI | Copiada do design system T2S (ver `docs/ui-vendoring.md`) |
-| Deploy | Site estático (`dist/`), sem backend |
+| Deploy | Site estático (`dist/`), sem backend; GitHub Pages via `.github/workflows/deploy-pages.yml` |
 
 ## Comandos
 
@@ -15,8 +15,15 @@ yarn install
 yarn dev        # servidor de desenvolvimento
 yarn test       # testes unitários (Vitest) de src/model, relógio e estado
 yarn build      # typecheck + build estático em dist/
+yarn build:single  # um único dist-single/index.html (JS, CSS e worker embutidos) para abrir como arquivo
 yarn preview    # serve o build
 ```
+
+## Publicação no GitHub Pages
+
+O workflow `.github/workflows/deploy-pages.yml` roda a cada push na `main` (ou manualmente, em Actions): instala, testa, gera `dist/` e publica. A versão de arquivo único vai junto, em `laserterapia-mucosite-oral-offline.html`, para quem quiser baixar e usar sem internet. Os caminhos relativos (`base: './'`) fazem o site funcionar no endereço `https://<usuário>.github.io/<repositório>/`.
+
+Uma vez só, no GitHub: **Settings → Pages → Build and deployment → Source: GitHub Actions**.
 
 ## Arquitetura
 

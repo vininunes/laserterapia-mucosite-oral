@@ -1,0 +1,59 @@
+# Publica a simulação no GitHub Pages a cada push na main (ou manualmente,
+# em Actions → "Deploy no GitHub Pages" → Run workflow).
+# Requer, uma vez: Settings → Pages → Build and deployment → Source: GitHub Actions.
+name: Deploy no GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Um deploy por vez; um push novo não cancela o que já está publicando.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          # Vite 7 pede Node 20.19+ ou 22.12+.
+          node-version: 22
+          cache: yarn
+
+      - run: yarn install --frozen-lockfile
+
+      - run: yarn test
+
+      # Versão de arquivo único, oferecida para download offline junto do site.
+      - run: yarn build:single
+
+      - run: yarn build
+
+      - name: Inclui a versão offline no site
+        run: cp dist-single/index.html dist/laserterapia-mucosite-oral-offline.html
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
