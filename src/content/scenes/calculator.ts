@@ -58,29 +58,31 @@ export const calculatorScript: SceneScript<CalculatorParams> = {
       t: 0,
       title: 'Dose é energia por área',
       caption:
-        'Na PBM para mucosite oral, a dose é a fluência, também chamada densidade de energia (J/cm²): quanta energia de luz chega a cada centímetro quadrado da mucosa. Ela sai de três ajustes do aparelho: potência (mW), tempo por ponto (s) e área do spot (cm²). Ajuste-os no painel.',
+        'Na PBM para mucosite oral, a dose é a densidade de energia (fluência, em J/cm²): quanta energia de luz chega a cada centímetro quadrado da mucosa. Ela sai de três ajustes do aparelho: potência (mW), tempo por ponto (s) e área do spot (cm²). Ajuste-os no painel.',
       camera: { position: [0, 4.5, 8.5], target: [0, 1, -0.4] },
     },
     {
       t: CALC_START,
       title: 'Laser ligado',
       caption:
-        'Irradiância = potência ÷ área (mW/cm²): é a "velocidade" da dose. Fluência = irradiância × tempo ÷ 1000. A barra sobe enquanto o laser está ligado e para quando o tempo do ponto acaba.',
+        'Irradiância = potência ÷ área (mW/cm²): é a "velocidade" da dose. Densidade de energia = irradiância × tempo ÷ 1000. A barra sobe enquanto o laser está ligado e para quando o tempo do ponto acaba.',
       camera: { position: [2.4, 3.2, 7.2], target: [0, 1, -0.4] },
     },
     {
       t: 20,
       title: 'O spot muda tudo',
       caption:
-        'A mesma potência concentrada num spot menor dá irradiância e fluência maiores. Teste: pause, reduza a área do spot e veja a barra e o painel. Por isso um protocolo informa a área, não só os J/cm².',
+        'A mesma potência concentrada num spot menor dá irradiância e densidade de energia maiores. Teste: pause, reduza a área do spot e veja a barra e o painel. Por isso um protocolo informa a área, não só os J/cm².',
       camera: { position: [-2.6, 4, 6.8], target: [0, 0.6, 0] },
     },
     {
       t: 60,
       title: 'Compare com os protocolos',
-      caption: `Os anéis marcam a fluência publicada de cada protocolo recomendado pela MASCC/ISOO. Use "Carregar protocolo" para ver os ajustes reais de cada um. Atingir o mesmo J/cm² não torna dois protocolos equivalentes. ${guidelineNotes.followWholeProtocol}`,
+      caption: `Os anéis marcam a densidade de energia publicada de cada protocolo recomendado pela MASCC/ISOO. Use "Carregar protocolo" para ver os ajustes reais de cada um. Atingir o mesmo J/cm² não torna dois protocolos equivalentes. ${guidelineNotes.followWholeProtocol}`,
       camera: { position: [3.2, 2.6, 6.4], target: [0, 1.2, -0.8] },
     },
   ],
+  // Mesma escala da cena dos protocolos: 1 unidade = 1 cm.
+  scale: { metersPerUnit: 1e-2, note: 'A altura da barra azul representa J/cm², não comprimento' },
   references: ['zadik-2019', 'mascc-isoo-2020-pbm'],
 }

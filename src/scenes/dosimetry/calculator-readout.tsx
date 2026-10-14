@@ -32,7 +32,7 @@ export function CalculatorReadout({ params }: SceneProps<CalculatorParams>) {
         value={`${formatNumber(d.irradianceMwCm2, 1)} mW/cm²`}
       />
       <Formula
-        label="Fluência (densidade de energia)"
+        label="Densidade de energia (fluência)"
         expr={`${formatNumber(d.irradianceMwCm2, 1)} mW/cm² × ${formatCompact(timeS)} s ÷ 1000`}
         value={`${formatNumber(d.fluenceJcm2, 2)} J/cm²`}
       />
@@ -49,7 +49,7 @@ export function CalculatorReadout({ params }: SceneProps<CalculatorParams>) {
           {deriveDose(match).fluenceMismatch && (
             <span className="text-warning">
               {' '}
-              ⚠ A fluência publicada é {formatNumber(match.reportedFluenceJcm2, 1)} J/cm²; o cálculo dá{' '}
+              ⚠ A densidade de energia publicada é {formatNumber(match.reportedFluenceJcm2, 1)} J/cm²; o cálculo dá{' '}
               {formatNumber(d.fluenceJcm2, 2)}. Conferir no artigo.
             </span>
           )}
@@ -68,7 +68,7 @@ export function CalculatorReadout({ params }: SceneProps<CalculatorParams>) {
 
       <div className="flex flex-col gap-1 border-t pt-2 text-[10px] leading-relaxed text-muted-foreground">
         <p>
-          Os anéis da barra marcam a fluência publicada de cada protocolo (Zadik et al., 2019). {guidelineNotes.followWholeProtocol}
+          Os anéis da barra marcam a densidade de energia publicada de cada protocolo (Zadik et al., 2019). {guidelineNotes.followWholeProtocol}
         </p>
         <p className="font-medium text-foreground">
           Conteúdo didático: não substitui a diretriz nem a orientação clínica.

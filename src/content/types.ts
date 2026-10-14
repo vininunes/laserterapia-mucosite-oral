@@ -53,4 +53,13 @@ export interface SceneScript<P extends NumericParams = NumericParams> {
   references: string[]
   /** Conteúdo esquemático: a UI avisa que é ilustrativo. */
   illustrative?: boolean
+  /** Escala da cena, para a barra de escala. Sem ela, a barra não aparece. */
+  scale?: SceneScale
 }
+
+/**
+ * Escala da cena. `metersPerUnit`: quanto uma unidade 3D vale no mundo real;
+ * `note`: ressalva curta exibida junto da barra. `outOfScale`: cena
+ * esquemática, a barra dá lugar ao aviso.
+ */
+export type SceneScale = { metersPerUnit: number; note?: string } | { outOfScale: true; note: string }

@@ -118,6 +118,8 @@ export const tissueScript: SceneScript<TissueParams> = {
       },
     },
   ],
+  // 1 unidade = 1 mm (camadas e profundidades reais; células fora de escala).
+  scale: { metersPerUnit: 1e-3, note: 'As células do epitélio estão fora de escala' },
   references: [
     'jacques-2013',
     'salomatina-2006',

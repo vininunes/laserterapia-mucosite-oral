@@ -58,6 +58,30 @@ describe('SimulationClock', () => {
     expect(clock.getSnapshot().speed).toBe(1)
   })
 
+  it('avisa o fim só quando a reprodução chega ao fim sozinha', () => {
+    const clock = new SimulationClock({ ...base, t: 9.95, playing: true })
+    const ended = vi.fn()
+    clock.onEnd(ended)
+    clock.tick(0.01)
+    expect(ended).not.toHaveBeenCalled()
+    clock.tick(0.1)
+    expect(clock.getSnapshot()).toMatchObject({ t: 10, playing: false })
+    expect(ended).toHaveBeenCalledTimes(1)
+    // Parado no fim, novos ticks não avisam de novo.
+    clock.tick(0.1)
+    expect(ended).toHaveBeenCalledTimes(1)
+  })
+
+  it('pausar, buscar o fim ou trocar de cena não avisam o fim', () => {
+    const clock = new SimulationClock({ ...base, t: 5, playing: true })
+    const ended = vi.fn()
+    clock.onEnd(ended)
+    clock.setPlaying(false)
+    clock.seek(10)
+    clock.load({ duration: 3 })
+    expect(ended).not.toHaveBeenCalled()
+  })
+
   it('load troca a duração e reposiciona', () => {
     const clock = new SimulationClock({ ...base, t: 5 })
     clock.load({ duration: 3, t: 8 })

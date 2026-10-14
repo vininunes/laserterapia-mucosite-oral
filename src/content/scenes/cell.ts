@@ -21,6 +21,7 @@ export const cellScript: SceneScript<CellParams> = {
   shortTitle: 'Célula',
   duration: 52,
   illustrative: true,
+  scale: { outOfScale: true, note: 'Esquema fora de escala: uma célula real mede poucas dezenas de µm' },
   defaults: { wavelengthNm: 660 },
   controls: [
     {

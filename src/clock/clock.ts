@@ -36,6 +36,7 @@ function sameSnapshot(a: ClockSnapshot, b: ClockSnapshot) {
 export class SimulationClock {
   private snapshot: ClockSnapshot
   private readonly listeners = new Set<() => void>()
+  private readonly endListeners = new Set<() => void>()
 
   constructor(initial: ClockSnapshot) {
     const duration = Math.max(initial.duration, 0)
@@ -55,8 +56,20 @@ export class SimulationClock {
     this.listeners.forEach((l) => l())
   }
 
+  /**
+   * Avisa quando a reprodução chega ao fim da timeline sozinha (pelo `tick`).
+   * Pausar, buscar ou trocar de cena não disparam.
+   */
+  onEnd = (listener: () => void): (() => void) => {
+    this.endListeners.add(listener)
+    return () => this.endListeners.delete(listener)
+  }
+
   tick(realDt: number) {
-    this.set(advance(this.snapshot, realDt))
+    const before = this.snapshot
+    const next = advance(before, realDt)
+    this.set(next)
+    if (before.playing && !next.playing) this.endListeners.forEach((l) => l())
   }
 
   seek(t: number) {

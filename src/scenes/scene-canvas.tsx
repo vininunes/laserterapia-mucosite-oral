@@ -2,13 +2,14 @@ import { useEffect, useRef } from 'react'
 
 import { OrbitControls } from '@react-three/drei'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
-import type { Vector3 } from 'three'
+import { MathUtils, PerspectiveCamera, Vector3 } from 'three'
 
 import type { ScriptStep } from '../content/types'
 import { useClock } from '../clock/use-simulation-clock'
 import { cameraAt } from '../model/timeline'
 import type { NumericParams } from '../state/hash-state'
 import { useThemeTokens } from '../ui/theme/theme-tokens'
+import type { ScaleStore } from './scale-store'
 import type { SceneDefinition } from './types'
 import { useCompactCanvas } from './use-compact-canvas'
 
@@ -82,13 +83,31 @@ function CameraRig({ steps }: { steps: ScriptStep[] }) {
   return null
 }
 
+const ORIGIN = new Vector3()
+
+/**
+ * Mede quantos pixels vale uma unidade 3D na distância do alvo da câmera (o
+ * ponto que ela enquadra) e publica no `ScaleStore` da barra de escala. Vem
+ * depois do `CameraRig` para medir a pose já aplicada no frame.
+ */
+function ScaleProbe({ store }: { store: ScaleStore }) {
+  const controls = useThree((s) => s.controls) as unknown as OrbitLike | null
+  useFrame(({ camera, size }) => {
+    if (!(camera instanceof PerspectiveCamera)) return
+    const distance = camera.position.distanceTo(controls?.target ?? ORIGIN)
+    store.set(size.height / (2 * distance * Math.tan(MathUtils.degToRad(camera.fov) / 2)))
+  })
+  return null
+}
+
 interface SceneCanvasProps {
   scene: SceneDefinition
   params: NumericParams
+  scaleStore?: ScaleStore
   className?: string
 }
 
-export function SceneCanvas({ scene, params, className }: SceneCanvasProps) {
+export function SceneCanvas({ scene, params, scaleStore, className }: SceneCanvasProps) {
   const tokens = useThemeTokens()
   const { Component, script } = scene
 
@@ -103,6 +122,7 @@ export function SceneCanvas({ scene, params, className }: SceneCanvasProps) {
       <Invalidator params={params} />
       <OrbitControls makeDefault enableDamping={false} />
       <CameraRig steps={script.steps} />
+      {scaleStore && <ScaleProbe store={scaleStore} />}
       {/* `key`: trocar de cena desmonta a anterior; o R3F faz dispose de geometrias e materiais. */}
       <Component key={script.id} params={params} />
     </Canvas>

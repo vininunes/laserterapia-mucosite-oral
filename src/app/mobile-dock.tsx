@@ -75,8 +75,11 @@ export function MobileDock({ scene, params, onChange, onApply }: MobileDockProps
           <ChevronDown className={cn('transition-transform', !open && 'rotate-180')} />
         </Button>
       </div>
+      {/* Altura fixa: o texto de cada etapa tem um tamanho, e uma gaveta que acompanhasse
+          o conteúdo mudaria a altura da cena (acima) a cada etapa, deslocando a
+          simulação. Texto mais longo rola aqui dentro. */}
       {open && (
-        <div className="max-h-[38dvh] min-h-0 overflow-y-auto border-t px-3 py-3" aria-live="polite">
+        <div className="h-[36dvh] min-h-0 overflow-y-auto overscroll-contain border-t px-3 py-3" aria-live="polite">
           {active === 'caption' && <CaptionContent steps={scene.script.steps} illustrative={scene.script.illustrative} />}
           {active === 'params' && (
             <ParameterControls controls={scene.script.controls} params={params} onChange={onChange} onApply={onApply} />

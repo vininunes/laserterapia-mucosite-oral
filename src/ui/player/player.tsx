@@ -27,6 +27,14 @@ export interface PlayerProps {
   onSeek(t: number): void
   onPlayingChange(playing: boolean): void
   onSpeedChange(speed: number): void
+  /**
+   * Navegação própria para os botões ⏮ ⏭ (ex.: trocar de cena). Sem ela, os
+   * botões pulam entre os marcadores da timeline.
+   */
+  navigation?: {
+    previous: { label: string; onClick(): void; disabled?: boolean }
+    next: { label: string; onClick(): void; disabled?: boolean }
+  }
   className?: string
 }
 
@@ -50,6 +58,7 @@ export function Player({
   onSeek,
   onPlayingChange,
   onSpeedChange,
+  navigation,
   className,
 }: PlayerProps) {
   const speedItems = useMemo(
@@ -70,14 +79,27 @@ export function Player({
   )
 
   const markerTimes = markers.map((m) => m.t)
-  const goPrevious = () => onSeek(previousMarker(markerTimes, t))
-  const goNext = () => onSeek(nextMarker(markerTimes, t, duration))
+  const previous = navigation?.previous ?? {
+    label: 'Etapa anterior',
+    onClick: () => onSeek(previousMarker(markerTimes, t)),
+  }
+  const next = navigation?.next ?? {
+    label: 'Próxima etapa',
+    onClick: () => onSeek(nextMarker(markerTimes, t, duration)),
+  }
 
   return (
     <FloatCard className={cn('flex h-10 w-full items-center gap-1.5 px-1.5', className)}>
       <div className="flex shrink-0 items-center gap-1.5">
-        <Tooltip text="Etapa anterior">
-          <Button variant="outline" size="icon" className="size-7 rounded-l-lg" onClick={goPrevious} aria-label="Etapa anterior">
+        <Tooltip text={previous.label}>
+          <Button
+            variant="outline"
+            size="icon"
+            className="size-7 rounded-l-lg"
+            onClick={previous.onClick}
+            disabled={previous.disabled}
+            aria-label={previous.label}
+          >
             <SkipBack className="fill-current" />
           </Button>
         </Tooltip>
@@ -94,8 +116,15 @@ export function Player({
           </Button>
         </Tooltip>
 
-        <Tooltip text="Próxima etapa">
-          <Button variant="outline" size="icon" className="size-7" onClick={goNext} aria-label="Próxima etapa">
+        <Tooltip text={next.label}>
+          <Button
+            variant="outline"
+            size="icon"
+            className="size-7"
+            onClick={next.onClick}
+            disabled={next.disabled}
+            aria-label={next.label}
+          >
             <SkipForward className="fill-current" />
           </Button>
         </Tooltip>
@@ -119,7 +148,9 @@ export function Player({
           value={[t]}
           onValueChange={(values) => onSeek(values[0])}
           markers={sliderMarkers}
-          className="min-w-0 flex-1"
+          // O trilho padrão (`muted`) some sobre a caixa da timeline nos dois temas.
+          // Início reto: ali fica a marca da primeira etapa (t = 0).
+          className="min-w-0 flex-1 [&_[data-slot=slider-track]]:rounded-l-none [&_[data-slot=slider-track]]:bg-foreground/20"
           aria-label="Linha do tempo"
         />
         <span className="shrink-0 text-[10px] text-muted-foreground tabular-nums">{formatTime(duration)}</span>

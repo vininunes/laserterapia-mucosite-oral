@@ -65,5 +65,7 @@ export const emWaveScript: SceneScript<EmWaveParams> = {
       camera: { position: [-8, 5, 11], target: [0, 0, 0] },
     },
   ],
+  // λ proporcional ao real: 660 nm ↦ 2 unidades (EM_VISUAL.unitsPer660nm).
+  scale: { metersPerUnit: 330e-9, note: 'Vale para o comprimento de onda; o aparelho e a altura da onda não estão em escala' },
   references: ['bipm-si-2019', 'bruton-1996', 'zadik-2019', 'karu-1998'],
 }
