@@ -26,7 +26,7 @@ export const emWaveScript: SceneScript<EmWaveParams> = {
       t: 0,
       title: 'Por que começar pela luz?',
       caption:
-        'A fotobiomodulação (PBM) usa luz de baixa potência para prevenir e tratar a mucosite oral, a inflamação e ulceração da boca causada por quimioterapia e radioterapia. Para entender o tratamento, começamos pelo que o laser emite: uma onda eletromagnética que sai da fonte, à esquerda, e avança.',
+        'A laserterapia de baixa potência, também chamada fotobiomodulação (PBM), usa luz de baixa intensidade para prevenir e tratar a mucosite oral, a inflamação e ulceração da boca causada por quimioterapia e radioterapia. Para entender o tratamento, começamos pelo que o laser emite: uma onda eletromagnética que sai da fonte, à esquerda, e avança.',
       camera: { position: [0, 1.2, 12], target: [0, 0, 0] },
     },
     {
@@ -40,7 +40,7 @@ export const emWaveScript: SceneScript<EmWaveParams> = {
       t: emWaveTiming.ruler,
       title: 'Comprimento de onda: a primeira escolha do protocolo',
       caption:
-        'A distância entre duas cristas é o comprimento de onda (λ). No tratamento ele define a cor do laser e até onde a luz chega no tecido (cena Tecido). Os protocolos recomendados pela MASCC/ISOO para prevenir a mucosite usam luz vermelha, de 632,8 a 660 nm.',
+        'A distância entre duas cristas é o comprimento de onda (λ). No tratamento ele define a cor do laser e até onde a luz chega no tecido (cena Tecido). Os protocolos recomendados pela MASCC/ISOO para prevenir a mucosite usam luz vermelha, de 632,8 a 660 nm: o laser de He-Ne (632,8 nm) e diodos de InGaAlP. O infravermelho (como 808 nm) vem de diodos de GaAlAs.',
       camera: { position: [1, 1.8, 7.5], target: [1, 0.8, 0] },
     },
     {
@@ -65,5 +65,5 @@ export const emWaveScript: SceneScript<EmWaveParams> = {
       camera: { position: [-8, 5, 11], target: [0, 0, 0] },
     },
   ],
-  references: ['bipm-si-2019', 'bruton-1996', 'zadik-2019'],
+  references: ['bipm-si-2019', 'bruton-1996', 'zadik-2019', 'karu-1998'],
 }

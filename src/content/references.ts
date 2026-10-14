@@ -151,4 +151,40 @@ export const references: Record<string, Reference> = {
     doi: '10.1007/s00520-016-3152-z',
     usage: 'Mecanismos, dosimetria e segurança da PBM em câncer de cabeça e pescoço, incluindo mucosite oral.',
   },
+
+  // Referências da revisão do TCC (citação como está no TCC, em ABNT). Usadas
+  // para alinhar a simulação ao texto; os originais não foram lidos aqui.
+  'karu-1998': {
+    id: 'karu-1998',
+    citation: 'KARU, T. I. The science of low-power laser therapy. Amsterdam: Gordon and Breach Science Publishers, 1998.',
+    usage: 'TCC, seção 3.3: lasers de baixa potência da Odontologia (He-Ne, GaAlAs, InGaAlP), vermelhos ou infravermelhos.',
+    unverified: true,
+  },
+  'eduardo-bezinelli-2010': {
+    id: 'eduardo-bezinelli-2010',
+    citation: 'EDUARDO, F. P.; BEZINELLI, L. M. Laserterapia de baixa intensidade aplicada à odontologia. São Paulo: Santos, 2010.',
+    usage: 'TCC, seção 3.4: potência usual de 10 a 100 mW e densidade de energia de 1 a 4 J/cm² por ponto.',
+    unverified: true,
+  },
+  'bjordal-2011': {
+    id: 'bjordal-2011',
+    citation:
+      'BJORDAL, J. M.; BENSADOUN, R. J.; TUNÈR, J.; FRIGO, L.; GJERDE, K.; LOPES-MARTINS, R. A. B. A systematic review with meta-analysis of the effect of low-level laser therapy (LLLT) in cancer therapy-induced oral mucositis. Supportive Care in Cancer, v. 19, n. 8, p. 1069-1077, 2011.',
+    usage: 'TCC, seções 3.3 e 3.4: efeitos analgésico, anti-inflamatório e cicatrizante; menos mediadores inflamatórios e liberação de endorfinas.',
+    unverified: true,
+  },
+  'piva-2011': {
+    id: 'piva-2011',
+    citation:
+      'PIVA, J. A. A. C.; SILVA, V. J.; RIBEIRO, M. S. Laser de baixa intensidade na Odontologia. Revista de Odontologia da Universidade Cidade de São Paulo, v. 23, n. 1, p. 74-84, 2011.',
+    usage: 'TCC, seção 3.3: proliferação celular, síntese de colágeno, angiogênese e melhora da microcirculação.',
+    unverified: true,
+  },
+  'franca-2009': {
+    id: 'franca-2009',
+    citation:
+      'FRANÇA, C. M.; NÚÑEZ, S. C.; PRATES, R. A.; NOBORIKAWA, E.; FARIA, M. R.; RIBEIRO, M. S. Low-intensity red laser on the prevention and treatment of induced-oral mucositis in hamsters. Journal of Photochemistry and Photobiology B: Biology, v. 94, n. 1, p. 25-31, 2009.',
+    usage: 'TCC, seção 3.3: reparo tecidual com laser vermelho de baixa intensidade na mucosite oral (modelo animal).',
+    unverified: true,
+  },
 }

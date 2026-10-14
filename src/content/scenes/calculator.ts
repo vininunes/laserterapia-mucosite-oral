@@ -1,3 +1,4 @@
+import { wavelengthOptionLabel } from '../lasers'
 import { guidelineNotes, protocols } from '../protocols'
 import type { SceneScript } from '../types'
 import { protocolName } from './dosimetry'
@@ -45,7 +46,7 @@ export const calculatorScript: SceneScript<CalculatorParams> = {
       label: 'Comprimento de onda',
       options: wavelengths.map((nm) => ({
         value: nm,
-        label: `${nm.toLocaleString('pt-BR')} nm${nm > 780 ? ' (infravermelho)' : ''}`,
+        label: wavelengthOptionLabel(nm),
       })),
     },
     { kind: 'slider', key: 'powerMw', label: 'Potência', min: 1, max: 500, step: 0.01, unit: 'mW' },
@@ -57,7 +58,7 @@ export const calculatorScript: SceneScript<CalculatorParams> = {
       t: 0,
       title: 'Dose é energia por área',
       caption:
-        'Na PBM para mucosite oral, a dose é a fluência (J/cm²): quanta energia de luz chega a cada centímetro quadrado da mucosa. Ela sai de três ajustes do aparelho: potência (mW), tempo por ponto (s) e área do spot (cm²). Ajuste-os no painel.',
+        'Na PBM para mucosite oral, a dose é a fluência, também chamada densidade de energia (J/cm²): quanta energia de luz chega a cada centímetro quadrado da mucosa. Ela sai de três ajustes do aparelho: potência (mW), tempo por ponto (s) e área do spot (cm²). Ajuste-os no painel.',
       camera: { position: [0, 4.5, 8.5], target: [0, 1, -0.4] },
     },
     {

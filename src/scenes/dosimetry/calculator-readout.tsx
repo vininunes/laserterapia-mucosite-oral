@@ -32,7 +32,7 @@ export function CalculatorReadout({ params }: SceneProps<CalculatorParams>) {
         value={`${formatNumber(d.irradianceMwCm2, 1)} mW/cm²`}
       />
       <Formula
-        label="Fluência (dose)"
+        label="Fluência (densidade de energia)"
         expr={`${formatNumber(d.irradianceMwCm2, 1)} mW/cm² × ${formatCompact(timeS)} s ÷ 1000`}
         value={`${formatNumber(d.fluenceJcm2, 2)} J/cm²`}
       />

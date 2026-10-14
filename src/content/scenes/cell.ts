@@ -1,4 +1,5 @@
 import type { CellParams, CellTiming } from '../../model/cell'
+import { wavelengthOptionLabel } from '../lasers'
 import type { SceneScript } from '../types'
 
 export const cellTiming: CellTiming = {
@@ -7,7 +8,9 @@ export const cellTiming: CellTiming = {
   atp: 15,
   signals: 21,
   inflammation: 27,
-  tissue: 34,
+  analgesia: 32,
+  healing: 37,
+  tissue: 43,
 }
 
 const overview = { position: [0, 2.5, 13] as [number, number, number], target: [0, 0, 0] as [number, number, number] }
@@ -16,7 +19,7 @@ export const cellScript: SceneScript<CellParams> = {
   id: 'celula',
   title: 'O que a luz faz na célula: citocromo c oxidase, ATP e inflamação',
   shortTitle: 'Célula',
-  duration: 44,
+  duration: 52,
   illustrative: true,
   defaults: { wavelengthNm: 660 },
   controls: [
@@ -26,7 +29,7 @@ export const cellScript: SceneScript<CellParams> = {
       label: 'Comprimento de onda do fóton',
       options: [632.8, 650, 660, 808].map((nm) => ({
         value: nm,
-        label: `${nm.toLocaleString('pt-BR')} nm${nm > 780 ? ' (infravermelho)' : ''}`,
+        label: wavelengthOptionLabel(nm),
       })),
     },
   ],
@@ -75,6 +78,20 @@ export const cellScript: SceneScript<CellParams> = {
       camera: overview,
     },
     {
+      t: cellTiming.analgesia,
+      title: 'Menos dor',
+      caption:
+        'Os mediadores inflamatórios também sensibilizam as terminações nervosas da mucosa. Com menos deles, a dor tende a diminuir; a literatura descreve ainda a liberação de endorfinas. É o efeito analgésico, que na mucosite ajuda o paciente a comer, falar e higienizar a boca.',
+      camera: overview,
+    },
+    {
+      t: cellTiming.healing,
+      title: 'Reparo do epitélio',
+      caption:
+        'O terceiro efeito é o cicatrizante. Com mais energia disponível, as células do epitélio se multiplicam e o tecido se refaz (as células vizinhas aparecem). Na lâmina própria, abaixo, descreve-se mais síntese de colágeno e formação de vasos (angiogênese), melhorando a circulação local.',
+      camera: { position: [0, 5, 15], target: [0, 0, 0] },
+    },
+    {
       t: cellTiming.tissue,
       title: 'De volta à mucosite',
       caption:
@@ -82,5 +99,5 @@ export const cellScript: SceneScript<CellParams> = {
       camera: { position: [0, 7, 17], target: [0, 0, 0] },
     },
   ],
-  references: ['karu-1999', 'hamblin-2017', 'sonis-2004', 'zadik-2019'],
+  references: ['karu-1999', 'hamblin-2017', 'sonis-2004', 'zadik-2019', 'bjordal-2011', 'piva-2011', 'franca-2009'],
 }

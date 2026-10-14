@@ -48,6 +48,8 @@ O painel Grandezas mostra a tabela comparativa (modo "todos") ou o detalhe do pr
 
 ## Assimetrias e pendências
 
+- **Faixa de dose do TCC.** A etapa final cita 10–100 mW e 1–4 J/cm² por ponto (Eduardo; Bezinelli, 2010, como no TCC, `unverified`) e avisa que os protocolos de RT + QT passam dessa faixa (4,2 e 6,2 J/cm²). Fluência e densidade de energia aparecem como sinônimos, como no TCC.
+
 - **⚠ Fluência do protocolo TCTH 632,8 nm.** 31,25 mW/cm² × 40 s = 1,25 J/cm², não 1,0 J/cm². Conferir no artigo qual valor está correto. A cena mostra a divergência e não escolhe.
 - **Marcação `*` nas irradiâncias** de 1000, 417 e 625 mW/cm²: significado ausente no resumo. Exibida como alerta no detalhe do protocolo.
 - **Conferência com o artigo.** Nenhum valor foi conferido no texto completo de Zadik et al. (2019); todos vêm do resumo transcrito.

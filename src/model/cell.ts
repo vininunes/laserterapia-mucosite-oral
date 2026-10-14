@@ -13,6 +13,9 @@ export interface CellTiming {
   atp: number
   signals: number
   inflammation: number
+  analgesia: number
+  /** Reparo: as células vizinhas aparecem (o epitélio se refaz). */
+  healing: number
   tissue: number
 }
 
@@ -43,7 +46,7 @@ export interface CellState {
   signals: number
   /** Opacidade dos mediadores inflamatórios (1 → 0,3: redução, não eliminação). */
   mediators: number
-  /** 0–1: células vizinhas (volta ao tecido). */
+  /** 0–1: células vizinhas (reparo do epitélio e volta ao tecido). */
   tissue: number
 }
 
@@ -74,7 +77,7 @@ export const cellModel: SceneModel<CellInput, CellState> = (t, { timing }) => {
     atpBoost: ramp(t, timing.atp, 3),
     signals: Math.sin(Math.PI * sig) * (t >= timing.signals ? 1 : 0),
     mediators: 1 - (1 - MEDIATOR_FLOOR) * ramp(t, timing.inflammation, 4),
-    tissue: ramp(t, timing.tissue, 2.5),
+    tissue: ramp(t, timing.healing, 2.5),
   }
 }
 

@@ -80,18 +80,18 @@ export const dosimetryScript: SceneScript<DosimetryParams> = {
       t: DOSE_START,
       title: 'O que é um ponto e como a dose sobe',
       caption:
-        'Um "ponto" é um local da mucosa oral onde a ponta do laser fica parada, iluminando a área do spot. Cada protocolo irradia vários pontos por sessão, um depois do outro. Em velocidade 1× a simulação corre em tempo real: o cronômetro abaixo de cada spot é o tempo que o laser fica sobre aquele ponto. A barra mostra a fluência acumulada (J/cm²) e o anel marca a fluência publicada.',
+        'Um "ponto" é um local da mucosa oral onde a ponta do laser fica parada, iluminando a área do spot. Cada protocolo irradia vários pontos por sessão, um depois do outro. Em velocidade 1× a simulação corre em tempo real: o cronômetro abaixo de cada spot é o tempo que o laser fica sobre aquele ponto. A barra mostra a fluência acumulada, também chamada densidade de energia (J/cm²), e o anel marca a fluência publicada.',
       camera: { position: [0, 3.6, 7.2], target: [0, 0.7, 0] },
     },
     ...byTime.map(endStep),
     {
       t: DOSE_START + longest + 2,
       title: 'Receitas diferentes, cada uma completa',
-      caption: `Cada protocolo combina λ, irradiância, tempo, spot e número de pontos de um jeito próprio. ${guidelineNotes.followWholeProtocol}`,
+      caption: `Cada protocolo combina λ, irradiância, tempo, spot e número de pontos de um jeito próprio. Manuais de laserterapia citam potências de 10 a 100 mW e 1 a 4 J/cm² por ponto; os protocolos de RT + QT da diretriz passam dessa faixa (4,2 e 6,2 J/cm²). ${guidelineNotes.followWholeProtocol}`,
       camera: { position: [-6.5, 5.5, 8.5], target: [0, 0.6, 0] },
     },
   ],
-  references: ['zadik-2019', 'mascc-isoo-2020-pbm', 'elad-2020'],
+  references: ['zadik-2019', 'mascc-isoo-2020-pbm', 'elad-2020', 'eduardo-bezinelli-2010'],
 }
 
 /** Entrada do modelo a partir dos parâmetros da URL. */

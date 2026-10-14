@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 
 import { atpParticle, CELL_LAYOUT, cellModel, hash01, MEDIATOR_FLOOR, mediatorParticle, noParticle } from './cell'
 
-const timing = { photon: 4, absorb: 9, atp: 13, signals: 19, inflammation: 25, tissue: 32 }
+const timing = { photon: 4, absorb: 9, atp: 13, signals: 19, inflammation: 25, analgesia: 30, healing: 34, tissue: 40 }
 const input = { wavelengthNm: 660, timing }
 
 describe('cellModel', () => {

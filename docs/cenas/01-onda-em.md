@@ -60,6 +60,8 @@ A legenda da etapa 2 e a nota do painel Grandezas avisam o usuário.
 
 ## Assimetrias e pendências
 
+- **Termos e lasers do TCC.** A 1ª etapa usa "laserterapia de baixa potência, também chamada fotobiomodulação", como o TCC. A etapa do comprimento de onda nomeia o meio de cada laser: He-Ne (632,8 nm), diodos InGaAlP (vermelho) e GaAlAs (infravermelho), seguindo a seção 3.3 do TCC (Karu, 1998, `unverified`). Os seletores de λ das outras cenas usam o mesmo rótulo (`src/content/lasers.ts`).
+
 - **Validação de conteúdo.** As legendas são afirmações qualitativas de física básica; precisam de revisão do especialista, junto com o resto do conteúdo.
 - **Limite do visível.** 380–780 nm é convenção (há fontes com 400–700 nm). O mesmo limite é usado na cor e na classificação "visível/infravermelho".
 - **Comparação fixa no roteiro.** A legenda da etapa 5 cita 660 nm e 808 nm "por padrão"; se o usuário mudar os sliders, o texto não acompanha.

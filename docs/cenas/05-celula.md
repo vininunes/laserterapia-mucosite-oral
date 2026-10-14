@@ -5,7 +5,7 @@ Esquemática e animada, **não simulada**. A UI marca "esquema ilustrativo" na l
 | Item | Valor |
 |---|---|
 | Id (URL) | `celula` |
-| Duração | 44 s, 7 etapas |
+| Duração | 52 s, 9 etapas |
 | Modelo | `src/model/cell.ts` (coreografia determinística em função de `t`) |
 | Roteiro | `src/content/scenes/cell.ts` |
 | Renderização | `src/scenes/cell/scene.tsx`, `readout.tsx` |
@@ -23,7 +23,9 @@ Esquemática e animada, **não simulada**. A UI marca "esquema ilustrativo" na l
 | 15 | Mais ATP | Partículas de ATP extras passam a sair da mitocôndria |
 | 21 | Sinalização | Pulso amarelo (ROS em baixa quantidade, fatores de transcrição) |
 | 27 | Modulação da inflamação | Mediadores diminuem até 30% — reduzem, não somem |
-| 34 | De volta à mucosite | Células vizinhas; ligação com o modelo de Sonis e com a recomendação MASCC/ISOO |
+| 32 | Menos dor | Efeito analgésico: menos mediadores que sensibilizam as terminações nervosas; endorfinas (TCC, seção 3.3) |
+| 37 | Reparo do epitélio | Células vizinhas aparecem: efeito cicatrizante (proliferação; colágeno e angiogênese na lâmina própria) |
+| 43 | De volta à mucosite | Ligação com o modelo de Sonis e com a recomendação MASCC/ISOO |
 
 ## Modelo
 
@@ -37,4 +39,5 @@ Estruturas (membrana, núcleo, mitocôndria) usam cores ilustrativas fixas. Elem
 
 - **Citações a conferir.** Karu 1999, Hamblin 2017 e Sonis 2004 estão marcadas `unverified` até a conferência de autores, volume e páginas.
 - **Afirmações qualitativas** (NO como inibidor deslocado, ATP, ROS em baixa quantidade, redução de mediadores pró-inflamatórios) seguem a literatura de PBM e precisam da revisão do especialista.
+- **Etapas vindas do TCC.** "Menos dor" e "Reparo do epitélio" cobrem os efeitos analgésico e cicatrizante que o TCC destaca (seções 3.3 e 3.4). Citam Bjordal 2011, Piva 2011 e França 2009 como estão nas referências do TCC, marcadas `unverified`: os textos não foram lidos aqui. Não têm animação própria além das células vizinhas no reparo.
 - **Quantidades ilustrativas.** Número de partículas, piso de 30% dos mediadores e tempos não têm significado quantitativo.
