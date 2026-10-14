@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { activeStepIndex, cameraAt } from './timeline'
+import { activeStepIndex, cameraAt, type TimedStep } from './timeline'
 
 const steps = [
   { t: 0, camera: { position: [0, 0, 10] as [number, number, number], target: [0, 0, 0] as [number, number, number] } },
@@ -32,6 +32,20 @@ describe('cameraAt', () => {
     expect(mid.position[0]).toBeCloseTo(5)
     expect(mid.position[2]).toBeCloseTo(5)
     expect(mid.target[1]).toBeCloseTo(0.5)
+  })
+
+  it('usa o keyframe compacto quando pedido, e o normal nas etapas sem ele', () => {
+    const compactSteps: TimedStep[] = [
+      { t: 0, camera: { position: [0, 0, 10], target: [0, 0, 0] } },
+      {
+        t: 10,
+        camera: { position: [10, 0, 0], target: [0, 0, 0] },
+        cameraCompact: { position: [20, 0, 0], target: [1, 0, 0] },
+      },
+    ]
+    expect(cameraAt(compactSteps, 10)?.position).toEqual([10, 0, 0])
+    expect(cameraAt(compactSteps, 10, true)?.position).toEqual([20, 0, 0])
+    expect(cameraAt(compactSteps, 0, true)?.position).toEqual([0, 0, 10])
   })
 
   it('devolve undefined sem keyframes', () => {

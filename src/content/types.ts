@@ -9,6 +9,8 @@ export interface ScriptStep {
   caption: string
   /** Keyframe de câmera; a câmera interpola entre os keyframes vizinhos. */
   camera?: CameraPose
+  /** Keyframe para canvas estreito (celular), quando o `camera` não serve. */
+  cameraCompact?: CameraPose
 }
 
 /** Controles do painel. Todo parâmetro é numérico (toggles usam 0/1) para caber na URL. */

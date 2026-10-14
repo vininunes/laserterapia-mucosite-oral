@@ -8,6 +8,8 @@ export interface CameraPose {
 export interface TimedStep {
   t: number
   camera?: CameraPose
+  /** Keyframe para canvas estreito (celular), quando o `camera` não serve. */
+  cameraCompact?: CameraPose
 }
 
 /**
@@ -35,10 +37,14 @@ function lerpVec(a: Vec3, b: Vec3, k: number): Vec3 {
 /**
  * Pose da câmera em `t`, interpolada (smoothstep) entre os keyframes das
  * etapas que têm `camera`. Fora do intervalo, segura o keyframe da ponta.
- * Sem keyframes, devolve `undefined` (a cena decide a câmera).
+ * Sem keyframes, devolve `undefined` (a cena decide a câmera). Com `compact`,
+ * usa o `cameraCompact` das etapas que o têm.
  */
-export function cameraAt(steps: readonly TimedStep[], t: number): CameraPose | undefined {
-  const keys = steps.filter((s): s is TimedStep & { camera: CameraPose } => !!s.camera)
+export function cameraAt(steps: readonly TimedStep[], t: number, compact = false): CameraPose | undefined {
+  const keys = steps.flatMap((s) => {
+    const camera = (compact && s.cameraCompact) || s.camera
+    return camera ? [{ t: s.t, camera }] : []
+  })
   if (keys.length === 0) return undefined
   if (t <= keys[0].t) return keys[0].camera
   const last = keys[keys.length - 1]

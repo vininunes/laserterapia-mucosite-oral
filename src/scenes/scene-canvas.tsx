@@ -10,6 +10,7 @@ import { cameraAt } from '../model/timeline'
 import type { NumericParams } from '../state/hash-state'
 import { useThemeTokens } from '../ui/theme/theme-tokens'
 import type { SceneDefinition } from './types'
+import { useCompactCanvas } from './use-compact-canvas'
 
 /**
  * `frameloop="demand"`: nada é desenhado sem motivo. Cada mudança do relógio
@@ -29,6 +30,16 @@ interface OrbitLike {
   update(): void
 }
 
+/** Os enquadramentos do roteiro foram feitos para tela larga (~16:9). */
+const DESIGN_ASPECT = 1.8
+const MAX_PORTRAIT_FACTOR = 2.4
+
+/** Quanto afastar a câmera para manter a largura enquadrada numa tela mais estreita. */
+function portraitDistanceFactor(aspect: number) {
+  if (!(aspect > 0)) return 1
+  return Math.min(Math.max(1, DESIGN_ASPECT / aspect), MAX_PORTRAIT_FACTOR)
+}
+
 /**
  * Aplica os keyframes de câmera do roteiro sempre que `t` muda. Pausado, o
  * usuário pode orbitar livremente; o próximo play ou seek devolve a câmera
@@ -38,15 +49,28 @@ function CameraRig({ steps }: { steps: ScriptStep[] }) {
   const clock = useClock()
   const camera = useThree((s) => s.camera)
   const controls = useThree((s) => s.controls) as unknown as OrbitLike | null
-  const applied = useRef<{ t: number; steps: ScriptStep[] | null }>({ t: Number.NaN, steps: null })
+  const aspect = useThree((s) => s.size.width / s.size.height)
+  const compact = useCompactCanvas()
+  const applied = useRef<{ t: number; steps: ScriptStep[] | null; aspect: number; compact: boolean }>({
+    t: Number.NaN,
+    steps: null,
+    aspect: Number.NaN,
+    compact: false,
+  })
 
   useFrame(() => {
     const t = clock.getSnapshot().t
-    if (applied.current.t === t && applied.current.steps === steps) return
-    applied.current = { t, steps }
-    const pose = cameraAt(steps, t)
+    const a = applied.current
+    if (a.t === t && a.steps === steps && a.aspect === aspect && a.compact === compact) return
+    applied.current = { t, steps, aspect, compact }
+    const pose = cameraAt(steps, t, compact)
     if (!pose) return
-    camera.position.set(...pose.position)
+    // O `fov` é vertical: em tela retrato (celular) a largura visível encolhe
+    // e a cena sai pelas laterais. Afasta a câmera do alvo na mesma direção.
+    const k = portraitDistanceFactor(aspect)
+    const [tx, ty, tz] = pose.target
+    const [px, py, pz] = pose.position
+    camera.position.set(tx + (px - tx) * k, ty + (py - ty) * k, tz + (pz - tz) * k)
     if (controls) {
       controls.target.set(...pose.target)
       controls.update()

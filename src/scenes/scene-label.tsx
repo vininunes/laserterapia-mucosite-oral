@@ -5,10 +5,10 @@ import { Vector3, type Group, type Object3D } from 'three'
 
 import type { Vec3 } from '../model/types'
 
-const BASE_CLASS =
+export const LABEL_BASE_CLASS =
   'pointer-events-none absolute top-0 left-0 z-[5] rounded bg-background/70 px-1 text-[11px] font-medium whitespace-nowrap text-foreground select-none'
 
-function isWorldVisible(o: Object3D | null): boolean {
+export function isWorldVisible(o: Object3D | null): boolean {
   for (let n = o; n; n = n.parent) if (!n.visible) return false
   return true
 }
@@ -32,8 +32,8 @@ export function SceneLabel({
   position: Vec3
   text: string
   className?: string
-  /** `left`: o texto começa no ponto; `right`: termina no ponto. */
-  anchor?: 'center' | 'left' | 'right'
+  /** `left`: o texto começa no ponto; `right`: termina no ponto; `top`: fica abaixo dele, centrado. */
+  anchor?: 'center' | 'left' | 'right' | 'top'
   /** O `<div>` do rótulo, para ajustar opacidade no `useFrame` da cena. */
   ref?: Ref<HTMLDivElement>
 }) {
@@ -52,7 +52,7 @@ export function SceneLabel({
   }, [gl, el])
 
   useLayoutEffect(() => {
-    el.className = `${BASE_CLASS} ${className}`
+    el.className = `${LABEL_BASE_CLASS} ${className}`
   }, [el, className])
 
   useLayoutEffect(() => {
@@ -71,7 +71,9 @@ export function SceneLabel({
     if (!show) return
     const x = ((projected.x + 1) / 2) * size.width
     const y = ((1 - projected.y) / 2) * size.height
-    el.style.transform = `translate3d(${x}px, ${y}px, 0) translate(${anchor === 'left' ? '0' : anchor === 'right' ? '-100%' : '-50%'}, -50%)`
+    const dx = anchor === 'left' ? '0' : anchor === 'right' ? '-100%' : '-50%'
+    const dy = anchor === 'top' ? '0' : '-50%'
+    el.style.transform = `translate3d(${x}px, ${y}px, 0) translate(${dx}, ${dy})`
   })
 
   return <group ref={group} position={position} />

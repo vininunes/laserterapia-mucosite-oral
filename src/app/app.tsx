@@ -9,11 +9,14 @@ import type { SceneDefinition } from '../scenes/types'
 import { decodeHashState, type NumericParams } from '../state/hash-state'
 import { resolveHashState } from '../state/initial-state'
 import { useHashSync } from '../state/use-hash-sync'
+import { cn } from '../ui/lib/cn'
 import { Panel } from '../ui/panel'
 import { Player } from '../ui/player/player'
 import { Tabs, TabsList, TabsTrigger } from '../ui/primitives/tabs'
 import { FloatCard } from '../ui/primitives/float-card'
+import { MOBILE_QUERY, useMediaQuery } from '../ui/use-media-query'
 import { Caption } from './caption'
+import { MobileDock } from './mobile-dock'
 import { ParameterPanel } from './parameter-panel'
 import { ThemeToggle } from './theme-toggle'
 import { useKeyboardShortcuts } from './use-keyboard-shortcuts'
@@ -41,6 +44,7 @@ export function App() {
   )
   const [scene, setScene] = useState(initial.scene)
   const [params, setParams] = useState<NumericParams>(initial.params)
+  const mobile = useMediaQuery(MOBILE_QUERY)
 
   useClockDriver(clock)
   useKeyboardShortcuts(clock)
@@ -76,54 +80,88 @@ export function App() {
   const setParam = useCallback((key: string, value: number) => setParams((p) => ({ ...p, [key]: value })), [])
   const applyParams = useCallback((values: NumericParams) => setParams((p) => ({ ...p, ...values })), [])
 
+  const titleBlock = (
+    <div className="min-w-0">
+      <h1 className="text-sm leading-tight font-semibold">{APP_TITLE}</h1>
+      <p className="hidden text-[10px] leading-tight text-muted-foreground sm:block">{APP_SUBTITLE}</p>
+    </div>
+  )
+
+  const sceneTabs = (
+    <Tabs value={scene.script.id} onValueChange={selectScene} className={cn('max-w-full min-w-0', mobile && 'w-full')}>
+      {/* `inline-flex`: o TabsList do DS não define display e, como bloco, os
+          triggers (inline-flex) alinhavam pela linha de base e desciam.
+          `justify-start`: centralizado, o que transborda à esquerda fica
+          fora do alcance da rolagem (cortava a 1ª aba no celular). */}
+      <TabsList className={cn('inline-flex h-8 max-w-full justify-start overflow-x-auto', mobile && 'w-full')}>
+        {scenes.map((s, i) => (
+          <TabsTrigger key={s.script.id} value={s.script.id} title={s.script.title} className="h-full">
+            <span className="text-muted-foreground tabular-nums">{i + 1}</span>
+            {s.script.shortTitle}
+          </TabsTrigger>
+        ))}
+      </TabsList>
+    </Tabs>
+  )
+
   return (
     <ClockContext.Provider value={clock}>
-      <div className="relative h-dvh w-full overflow-hidden bg-background text-foreground">
-        <SceneCanvas scene={scene} params={params} className="!absolute inset-0" />
+      {/* No celular a gaveta e o player saem de cima da cena e ficam abaixo dela: a
+          cena encolhe para a área livre e o conteúdo 3D fica centrado no que se vê. */}
+      <div className="flex h-dvh w-full flex-col overflow-hidden bg-background text-foreground">
+        <div className="relative min-h-0 flex-1">
+          <SceneCanvas scene={scene} params={params} className="!absolute inset-0" />
 
-        <div className="pointer-events-none absolute inset-0 z-10 flex flex-col gap-2 p-2">
-          <header className="flex items-start justify-between gap-2">
-            <FloatCard className="flex min-w-0 flex-wrap items-center gap-x-4 gap-y-2 px-3 py-2">
-              <div className="min-w-0">
-                <h1 className="text-sm leading-tight font-semibold">{APP_TITLE}</h1>
-                <p className="text-[10px] leading-tight text-muted-foreground">{APP_SUBTITLE}</p>
-              </div>
-              <Tabs value={scene.script.id} onValueChange={selectScene} className="min-w-0">
-                {/* `inline-flex`: o TabsList do DS não define display e, como bloco, os
-                    triggers (inline-flex) alinhavam pela linha de base e desciam. */}
-                <TabsList className="inline-flex h-8 max-w-full overflow-x-auto">
-                  {scenes.map((s, i) => (
-                    <TabsTrigger key={s.script.id} value={s.script.id} title={s.script.title} className="h-full">
-                      <span className="text-muted-foreground tabular-nums">{i + 1}</span>
-                      {s.script.shortTitle}
-                    </TabsTrigger>
-                  ))}
-                </TabsList>
-              </Tabs>
-            </FloatCard>
-            <FloatCard className="flex shrink-0 items-center p-1.5">
-              <ThemeToggle />
-            </FloatCard>
-          </header>
+          <div className="pointer-events-none absolute inset-0 z-10 flex flex-col gap-2 p-2">
+            {/* No celular o header ocupa a largura toda, com o tema ao lado do título e as abas embaixo. */}
+            {mobile ? (
+              <header className="w-full">
+                <FloatCard className="flex w-full flex-col gap-2 px-3 py-2">
+                  <div className="flex items-center justify-between gap-2">
+                    {titleBlock}
+                    <ThemeToggle />
+                  </div>
+                  {sceneTabs}
+                </FloatCard>
+              </header>
+            ) : (
+              <header className="flex items-start justify-between gap-2">
+                <FloatCard className="flex min-w-0 flex-wrap items-center gap-x-4 gap-y-2 px-3 py-2">
+                  {titleBlock}
+                  {sceneTabs}
+                </FloatCard>
+                <FloatCard className="flex shrink-0 items-center p-1.5">
+                  <ThemeToggle />
+                </FloatCard>
+              </header>
+            )}
 
-          <div className="flex min-h-0 flex-1 flex-col justify-between gap-2 md:flex-row-reverse md:items-start">
-            <div className="flex min-h-0 w-full shrink-0 flex-col gap-2 md:max-h-full md:w-80">
-              <ParameterPanel controls={scene.script.controls} params={params} onChange={setParam} onApply={applyParams} />
-              {scene.Readout && (
-                <Panel title="Grandezas">
-                  <scene.Readout params={params} />
-                </Panel>
-              )}
-            </div>
-            <Caption
-              steps={scene.script.steps}
-              illustrative={scene.script.illustrative}
-              className="md:self-end"
-            />
+            {!mobile && (
+              <>
+                <div className="flex min-h-0 flex-1 flex-row-reverse items-start justify-between gap-2">
+                  <div className="flex max-h-full min-h-0 w-80 shrink-0 flex-col gap-2">
+                    <ParameterPanel controls={scene.script.controls} params={params} onChange={setParam} onApply={applyParams} />
+                    {scene.Readout && (
+                      <Panel title="Grandezas">
+                        <scene.Readout params={params} />
+                      </Panel>
+                    )}
+                  </div>
+                  <Caption steps={scene.script.steps} illustrative={scene.script.illustrative} className="self-end" />
+                </div>
+                <ConnectedPlayer scene={scene} />
+              </>
+            )}
           </div>
-
-          <ConnectedPlayer scene={scene} />
         </div>
+
+        {/* Em tela pequena a legenda e os painéis cobririam a cena inteira: vão para a gaveta. */}
+        {mobile && (
+          <div className="flex shrink-0 flex-col gap-2 p-2 pt-0">
+            <MobileDock scene={scene} params={params} onChange={setParam} onApply={applyParams} />
+            <ConnectedPlayer scene={scene} />
+          </div>
+        )}
       </div>
     </ClockContext.Provider>
   )
