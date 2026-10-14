@@ -2,6 +2,7 @@ import { useEffect, useRef, useSyncExternalStore } from 'react'
 
 import type { McConfig, McResult } from '../../model/monte-carlo'
 import type { McRequest, McResponse } from '../../model/workers/monte-carlo.worker'
+import { createMcWorker } from './create-mc-worker'
 
 export interface McRun {
   key: string
@@ -47,9 +48,7 @@ class McStore {
 
   private ensureWorker(): Worker {
     if (this.worker) return this.worker
-    const worker = new Worker(new URL('../../model/workers/monte-carlo.worker.ts', import.meta.url), {
-      type: 'module',
-    })
+    const worker = createMcWorker()
     worker.onmessage = (event: MessageEvent<McResponse>) => {
       const key = this.ids.get(event.data.id)
       this.ids.delete(event.data.id)
