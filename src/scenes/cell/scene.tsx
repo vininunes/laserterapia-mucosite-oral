@@ -19,11 +19,8 @@ import { wavelengthToRgb } from '../../model/spectrum'
 import { useThemeTokens } from '../../ui/theme/theme-tokens'
 import { SceneLabel } from '../scene-label'
 import type { SceneProps } from '../types'
+import { MEMBRANE, MITOCHONDRION, NUCLEUS } from './colors'
 
-/** Cores ilustrativas das estruturas: conteúdo da cena, não UI. */
-const MEMBRANE = '#7cc4c0'
-const NUCLEUS = '#9b8fd6'
-const MITOCHONDRION = '#e9a25f'
 
 const ATP_COUNT = CELL_LAYOUT.atpBase + CELL_LAYOUT.atpExtra
 const dummy = new Object3D()

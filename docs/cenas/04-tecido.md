@@ -5,7 +5,7 @@ Dois blocos de mucosa jugal lado a lado (padrão: 660 nm × 808 nm). Fótons faz
 | Item | Valor |
 |---|---|
 | Id (URL) | `tecido` |
-| Duração | 44 s, 5 etapas |
+| Duração | 56 s, 7 etapas |
 | Motor | `src/model/monte-carlo.ts` (puro, seed), `src/model/workers/monte-carlo.worker.ts` |
 | Óptica das camadas | `src/model/tissue-optics.ts`, calculada de `src/content/parameters.ts` |
 | Roteiro | `src/content/scenes/tissue.ts` |
@@ -69,6 +69,16 @@ Dois blocos de mucosa jugal lado a lado (padrão: 660 nm × 808 nm). Fótons faz
 - Sem diferença de índice de refração na superfície: o fóton que volta sai. Isso superestima a fração que volta e subestima a luz retida perto da superfície.
 - Camadas planas e infinitas na lateral, feixe colimado e perpendicular, spot de 1 mm.
 - Trajetórias desenhadas: 700 por λ, um vértice a cada 8 interações (até 360). A estatística usa todos os fótons e todas as interações.
+
+## Células-alvo no epitélio
+
+Três fileiras de células epiteliais (basais, intermediárias e superficiais achatadas), com núcleo, na face da frente da faixa do epitélio dos dois blocos. São as células-alvo que a cena 3 mostra por dentro e usam as mesmas cores de membrana e núcleo (`src/scenes/cell/colors.ts`). **Fora de escala:** uma célula real mede poucas dezenas de µm e sumiria num bloco desenhado em mm. O rótulo do epitélio e a legenda da 1ª etapa avisam isso. Só a ilustração muda: o Monte Carlo não sabe das células.
+
+**Câmera:** só dois enquadramentos, a comparação dos blocos (visão geral) e o close no epitélio do bloco da esquerda. A última etapa ("A célula-alvo", t = 47 s) volta ao epitélio e para numa célula da fileira do meio do bloco da esquerda (`TISSUE_FOCUS_CELL`), que acende com um anel e o rótulo "célula-alvo · cena 3". É a ponte para a cena 3, que começa dentro de uma célula do epitélio. A fileira do meio é desenhada centrada para ter uma célula exatamente onde a câmera mira.
+
+**Vermelho na boca:** a etapa "Por que o vermelho basta na boca" (t = 39 s), logo antes do foco na célula, explica que os protocolos MASCC/ISOO são intraorais, com a ponteira na mucosa: o alvo está a menos de 1 mm e o vermelho chega até ele. O infravermelho só leva vantagem quando a luz precisa atravessar mais tecido. A legenda evita dizer que só o vermelho funciona (a diretriz recomenda o vermelho, não exclui o infravermelho) e não cita a PBM extraoral, que ainda falta confirmar na fonte.
+
+**Celular:** os rótulos das camadas ficam sempre fora do tecido, à esquerda do bloco da esquerda, com linha-guia. Para caberem, as etapas de comparação e de close têm um `cameraCompact` (câmera um pouco mais recuada e deslocada para a esquerda), usado quando o canvas tem menos de 640 px de largura.
 
 ## Testes
 
